@@ -6,151 +6,80 @@
     <title>Warehouse Home</title>
     <!-- Font Awesome cho icon -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <style>
-        /* Reset cơ bản */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
-        }
-
-        body {
-            background-color: #e6f2ff; /* màu xanh nhạt nền */
-            color: #003366; /* màu xanh đậm chữ */
-        }
-
-        /* Header */
-        header {
-            background-color: #0073e6; /* xanh chủ đạo */
-            color: white;
-            padding: 15px 20px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .title {
-            font-size: 1.5rem;
-            font-weight: bold;
-        }
-
-        .side-bar-btn {
-            cursor: pointer;
-        }
-
-        .user-menu button {
-            background-color: white;
-            color: #0073e6;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-left: 10px;
-        }
-
-        .user-menu p {
-            margin: 0;
-        }
-
-        /* Side-bar */
-        .side-bar {
-            width: 250px;
-            height: 100vh;
-            background-color: #0059b3; /* xanh đậm */
-            position: fixed;
-            top: 0;
-            left: -250px; /* ẩn mặc định */
-            transition: 0.3s;
-            padding: 20px;
-            color: white;
-        }
-
-        .side-bar.active {
-            left: 0;
-        }
-
-        .side-bar a {
-            display: block;
-            color: white;
-            text-decoration: none;
-            padding: 10px 0;
-            font-weight: bold;
-        }
-
-        /* Nội dung chính */
-        .main-content {
-            margin-left: 0;
-            padding: 20px;
-            transition: 0.3s;
-        }
-
-        .side-bar.active ~ .main-content {
-            margin-left: 250px;
-        }
-
-        /* Modal */
-        .modal {
-            display: none; 
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0,0,0,0.4);
-        }
-
-        .modal-content {
-            background-color: #f1f1f1;
-            margin: 10% auto;
-            padding: 20px;
-            border-radius: 8px;
-            width: 300px;
-        }
-
-        .close {
-            float: right;
-            font-size: 1.5rem;
-            cursor: pointer;
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        .input-login {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-
-        .btn-login {
-            background-color: #0073e6;
-            color: white;
-            border: none;
-            padding: 10px;
-            width: 100%;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        .btn-login:hover {
-            background-color: #0059b3;
-        }
-    </style>
+    @vite('resources/css/home.css')
+    @vite('resources/js/home.js')
 </head>
 <body>
-    <!-- Header + Nav -->
     <header>
+    <nav>
         <div class="side-bar-btn" id="menu-btn"> 
             <i class="fa-solid fa-bars fa-lg"></i>
         </div>
         <p class="title"> THE WAREHOUSE CENTER </p>
         <div class="user-menu">
-            <!-- Giả lập user -->
+        {{-- user --}}
+        @if(user) 
+            <div id="userDiv">
+                <p>Welcome, {{user.fullName}} ! 
+                    <a id="logoutBtn" href="#">Logout</a>
+                </p>
+            </div>
+        @else
+        {{-- Login --}}
             <div id="loginDiv">
+                <!-- Nút mở popup -->
                 <button class="header-btn" onclick="openLogin()">Đăng nhập</button>
-                <div id="loginModal"
+                <!-- Popup (ẩn mặc định) -->
+                <div id="loginModal" class="modal">
+                    <div class="modal-content">
+                        <span class="close" onclick="closeLogin()">&times;</span>
+                        <h2>Đăng nhập</h2>
+                        <form class="login-form" id="loginForm">
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input class="input-login" type="email" id="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Mật khẩu</label>
+                            <input class="input-login" type="password" id="password" required>
+                        </div> 
+                            <button class="btn-login" type="submit">Đăng nhập</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {{-- Register --}}
+            <div id="registerDiv">
+                                <!-- Nút mở popup -->
+                <button class="header-btn" onclick="openRegister()">Đăng ký</button>
+                <!-- Popup (ẩn mặc định) -->
+                <div id="registerModal" class="modal">
+                    <div class="modal-content">
+                        <span class="close" onclick="closeRegister()">&times;</span>
+                        <h2>Đăng ký</h2>
+                        <form class="login-form" id="registerForm"  method="post" action="/auth/register">
+                        <div class="form-group">
+                            <label>Full Name</label>
+                            <input class="input-login" type="text" id="fullName" required>
+                        </div>   
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input class="input-login" type="email" id="emailR" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Mật khẩu</label>
+                            <input class="input-login" type="password" id="passwordR" required>
+                        </div> 
+                            <button class="btn-login" type="submit">Đăng ký</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        @endif
+        </div>
+    </nav>
+</header>
+
+{{-- side-bar --}}
+    <div id="side-bar" class="side-bar">
+    </div>
