@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delivery Logs</title>
+    @vite(['resources/css/logs.css'])
+</head>
+<body>
+    <a href="/" class="btn-home">⬅ Back Home</a>
+    <h1>Delivery Logs</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Kiot</th>
+                <th>Quantity</th>
+                <th>Created At</th>
+            </tr>
+        </thead>
+        @each(logs in log)
+        <tbody>
+            <tr>
+                <td>{{ logs.id }}</td>
+                <td>{{ logs.kiot }}</td>
+                <td>{{ logs.quantity }}</td>
+                <td>{{ logs.createdAt.toFormat('dd/MM/yyyy HH:mm') }}</td>
+            </tr>
+        </tbody>
+        @end
+    </table>
+</body>
+</html>

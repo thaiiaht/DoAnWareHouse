@@ -98,8 +98,6 @@ nav {
 }
 
 .user-menu a {
-    color: red;
-    font-size: 0.8rem;
     padding-left: 0.2rem;
     cursor: pointer;
     text-decoration: none;
@@ -245,7 +243,7 @@ label {
     left: 0;
     width: 200px;   /* chiều rộng */
     height: 100vh;  /* full màn hình */
-    background: #1e3a8a;
+    background: #1d46b7;
     z-index: 1000;  /* cao hơn header */
     transform: translateX(-100%); /* ẩn ban đầu */
     transition: transform 0.3s ease;
@@ -255,8 +253,11 @@ label {
   transform: translateX(0); /* hiện ra */
 }
 
+.sideBar {
+    margin-top: 50px;
+}
+
 .sideBar-btn {
-    margin-top: 25px;
     width: 100%;
     height: 40px;
     background: transparent;
@@ -268,8 +269,9 @@ label {
     transition: all 0.2s ease;
     color: white;
     padding: 8px;
-    background-color: #1459ba;
+    background-color: #1e3a8a;
     font-size: 14px;
+    margin: 15px 0;
 }
 
 .sideBar-btn:hover {
@@ -282,4 +284,8 @@ label {
 
 .sideBar-btn i {
     font-size: 20px;
+}
+
+.logout {
+    color: red;
 }

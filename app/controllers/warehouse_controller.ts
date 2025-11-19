@@ -3,6 +3,11 @@ import DeliveryLog from '#models/delivery_log'
 import transmit from '@adonisjs/transmit/services/main'
 
 export default class WarehouseController {
+    async index({ view }: HttpContext) {
+        const log = await DeliveryLog.all()
+        return view.render('deliveryLogs', { log })
+    }
+
     async handleArrival({ request, response }: HttpContext) {
         const { kiot, quantity } = request.body()
         await DeliveryLog.create({

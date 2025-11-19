@@ -23,7 +23,7 @@
         @if(user) 
             <div id="userDiv">
                 <p>Welcome, {{user.fullName}} ! 
-                    <a id="logoutBtn" href="#">Logout</a>
+                    <a class="logout" id="logoutBtn" href="#">Logout</a>
                 </p>
             </div>
         @else
@@ -82,9 +82,12 @@
 @endif
 {{-- side-bar --}}
 <div id="side-bar" class="side-bar">
+    <div class="sideBar">
+    <a class="sideBar-btn" href="/logs"> Delivery Logs</a>
     @if(user?.role === 'admin')
     <a class="sideBar-btn" href="{{ route('admin.index') }}"> Employee management </a>
     @endif
+    </div>
 </div>
 
 <div id="notification">
@@ -209,4 +212,7 @@
                 <div class="warehouse-status status-active">Hoạt động tốt</div>
             </div>
         </div>
+</div>
+<div class="deliveryLog">
+
 </div>
