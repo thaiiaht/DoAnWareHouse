@@ -41,8 +41,13 @@
                         <td>
                             <div class="role-action-column">
                                 <select class="role-select" onchange="updateRole(this.value, '{{ users.id }}')">
+                                    <option value="admin" {{ users.role === 'admin' ? 'selected' : '' }}>admin</option>
                                     <option value="staff" {{ users.role === 'staff' ? 'selected' : '' }}>staff</option>
-                                    <option value="admin" {{ users.role === 'admin' ? 'selected' : '' }}>Admin</option>
+                                    <option value="kho-a staff" {{ users.role === 'kho-a staff' ? 'selected' : '' }}>kho-a staff</option>
+                                    <option value="kho-b staff" {{ users.role === 'kho-b staff' ? 'selected' : '' }}>kho-b staff</option>
+                                    <option value="kho-c staff" {{ users.role === 'kho-c staff' ? 'selected' : '' }}>kho-c staff</option>
+                                    <option value="kho-d staff" {{ users.role === 'kho-d staff' ? 'selected' : '' }}>kho-d staff</option>
+                                    
                                 </select>
                             </div>
                         </td>

@@ -106,7 +106,9 @@
 <div class="container">
         <!-- Profile Block -->
         <div class="profile-block">
-            <div class="profile-avatar">{{ user?.role ?? 'Hehehe'}}</div>
+            <div class="profile-avatar">
+                <i class="fa-solid fa-user-tie fa-2xl"></i>
+            </div>
             <div class="profile-info">
                 <div class="profile-name">{{user?.fullName ?? 'Undefined'}}</div>
                 <div class="profile-role">{{ user?.email ?? 'None'}}</div>
