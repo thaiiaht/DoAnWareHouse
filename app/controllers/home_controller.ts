@@ -45,7 +45,7 @@ export default class HomeController {
         // Check available_capacity
         // Quá (50 slots)
         if ( type === 'in' && newStock > CAPACITY_LIMIT) {
-            await transmit.broadcast('/kiot/updates', {
+            transmit.broadcast('/kiot/updates', {
                 status: 'error',
                 message: `Cảnh báo: ${kiotName} đã đầy ! (Hiện có: ${currentStock}, Nhập: ${quantity} -> Vượt quá 50)`,
                 kiotName: kiotName

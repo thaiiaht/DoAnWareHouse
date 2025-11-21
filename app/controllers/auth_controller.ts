@@ -15,8 +15,6 @@ export default class AuthController {
             { key: 'kho-d', name: 'Kho D' },
         ]
 
-        console.log('Bắt đầu lấy dữ liệu kho...') // <-- Debug 1
-
         // 2. Chạy vòng lặp tính toán dữ liệu
         const warehouses = await Promise.all(kiotConfig.map(async (config) => {
             const Model = kiotMap[config.key as keyof typeof kiotMap]
@@ -44,8 +42,6 @@ export default class AuthController {
                 remaining: CAPACITY - current
             }
         }))
-
-        console.log('Dữ liệu đã lấy:', warehouses) // <-- Debug 2: Xem dữ liệu hiện ra ở Terminal chưa?
         return view.render('home', { 
             user: user, 
             warehouses: warehouses 
