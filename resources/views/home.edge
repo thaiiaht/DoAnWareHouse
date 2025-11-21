@@ -103,7 +103,7 @@
             };
         }
         </script>
-
+</div>
 </header>
 
 <div class="container">
@@ -125,12 +125,6 @@
     </div>
 
     <div class="warehouse-grid">
-        
-        {{-- Kiểm tra nếu không có dữ liệu thì báo lỗi --}}
-        @if(!warehouses || warehouses.length === 0)
-            <p style="color: red; grid-column: span 2;">Không có dữ liệu kho nào được tìm thấy.</p>
-        @else
-            {{-- Vòng lặp hiển thị các kho --}}
             @each(wh in warehouses)
                 <div class="warehouse-card" id="{{ wh.id }}-card">
                     <div class="warehouse-icon">
@@ -163,8 +157,6 @@
                     <div class="warehouse-status status-active">Hoạt động</div>
                 </div>
             @endeach
-        @endif
-
     </div> 
 </div>
 
