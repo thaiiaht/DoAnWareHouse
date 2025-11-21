@@ -6,15 +6,11 @@ import { middleware } from './kernel.js'
 
 import '#start/routes/admin'
 import '#start/routes/warehouse'
+import '#start/routes/home'
 
 transmit.registerRoutes()
 
-router.get('/', async ({ view, auth }) => {
-    await auth.use('web').check()
-    const user = auth.use('web').user
-    return view.render('home', { user })
-}).use(middleware.optional())
-
+router.get('/', [AuthController, 'index']).use(middleware.optional())
 router.post('/login', [AuthController, 'login'])
 router.post('/register', [AuthController, 'register'])
 router.post('/logout', [AuthController, 'logout'])

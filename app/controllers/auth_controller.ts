@@ -1,11 +1,55 @@
 import { HttpContext } from '@adonisjs/core/http'
 import User from '#models/user'
+import { kiotMap } from '../Helpers/kiotMap.js'
 
 export default class AuthController {
-    async index({ view, auth }: HttpContext) {
+   async index({ view, auth }: HttpContext) {
         await auth.use('web').check()
         const user = auth.use('web').user
-        return view.render('home', { user })
+
+        // 1. Cấu hình danh sách kho
+        const kiotConfig = [
+            { key: 'kho-a', name: 'Kho A' },
+            { key: 'kho-b', name: 'Kho B' },
+            { key: 'kho-c', name: 'Kho C' },
+            { key: 'kho-d', name: 'Kho D' },
+        ]
+
+        console.log('Bắt đầu lấy dữ liệu kho...') // <-- Debug 1
+
+        // 2. Chạy vòng lặp tính toán dữ liệu
+        const warehouses = await Promise.all(kiotConfig.map(async (config) => {
+            const Model = kiotMap[config.key as keyof typeof kiotMap]
+            
+            // Nếu không tìm thấy Model thì trả về dữ liệu rỗng để tránh lỗi
+            if (!Model) {
+                console.log(`Lỗi: Không tìm thấy Model cho ${config.key}`)
+                return { id: config.key, name: config.name, capacity: 50, current: 0, remaining: 50 }
+            }
+
+            // Tính toán
+            const inRes = await Model.query().where('type', 'in').sum('quantity as total')
+            const outRes = await Model.query().where('type', 'out').sum('quantity as total')
+            
+            const totalIn = Number(inRes[0].$extras.total) || 0
+            const totalOut = Number(outRes[0].$extras.total) || 0
+            const current = totalIn - totalOut
+            const CAPACITY = 50
+
+            return {
+                id: config.key,
+                name: config.name,
+                capacity: CAPACITY,
+                current: current,
+                remaining: CAPACITY - current
+            }
+        }))
+
+        console.log('Dữ liệu đã lấy:', warehouses) // <-- Debug 2: Xem dữ liệu hiện ra ở Terminal chưa?
+        return view.render('home', { 
+            user: user, 
+            warehouses: warehouses 
+        })
     }
 
     async login({ auth, request, response }: HttpContext) {

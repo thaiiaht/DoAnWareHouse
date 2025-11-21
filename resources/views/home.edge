@@ -4,14 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Warehouse Home</title>
-    <!-- Font Awesome cho icon -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+
     @vite(['resources/css/header.css', 'resources/css/main.css'])
     @vite(['resources/js/home.js', 'resources/js/app.js'])
 </head>
 <body>
+
 <header>
     <nav>
         <div class="side-bar-btn" id="menu-btn"> 
@@ -19,7 +22,6 @@
         </div>
         <p class="title"> THE WAREHOUSE CENTER </p>
         <div class="user-menu">
-        {{-- user --}}
         @if(user) 
             <div id="userDiv">
                 <p>Welcome, {{user.fullName}} ! 
@@ -27,72 +29,34 @@
                 </p>
             </div>
         @else
-        {{-- Login --}}
             <div id="loginDiv">
-                <!-- Nút mở popup -->
                 <button class="header-btn" onclick="openLogin()">Đăng nhập</button>
-                <!-- Popup (ẩn mặc định) -->
                 <div id="loginModal" class="modal">
                     <div class="modal-content">
                         <span class="close" onclick="closeLogin()">&times;</span>
                         <h2>Đăng nhập</h2>
                         <form class="login-form" id="loginForm">
-                        <div class="form-group">
-                            <label>Email</label>
-                            <input class="input-login" type="email" id="email" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Mật khẩu</label>
-                            <input class="input-login" type="password" id="password" required>
-                        </div> 
-                            <button class="btn-login" type="submit">Đăng nhập</button>
-                        </form>
+                            </form>
                     </div>
                 </div>
             </div>
-            {{-- Register --}}
-            <div id="registerDiv">
-                                <!-- Nút mở popup -->
-                <button class="header-btn" onclick="openRegister()">Đăng ký</button>
-                <!-- Popup (ẩn mặc định) -->
-                <div id="registerModal" class="modal">
-                    <div class="modal-content">
-                        <span class="close" onclick="closeRegister()">&times;</span>
-                        <h2>Đăng ký</h2>
-                        <form class="login-form" id="registerForm"  method="post" action="/auth/register">
-                        <div class="form-group">
-                            <label>Full Name</label>
-                            <input class="input-login" type="text" id="fullName" required>
-                        </div>   
-                        <div class="form-group">
-                            <label>Email</label>
-                            <input class="input-login" type="email" id="emailR" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Mật khẩu</label>
-                            <input class="input-login" type="password" id="passwordR" required>
-                        </div> 
-                            <button class="btn-login" type="submit">Đăng ký</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
+        @endif
         </div>
     </nav>
-@endif
-{{-- side-bar --}}
+</header>
+
 <div id="side-bar" class="side-bar">
     <div class="sideBar">
-    <a class="sideBar-btn" href="/logs"> Delivery Logs</a>
-    @if(user?.role === 'admin')
-    <a class="sideBar-btn" href="{{ route('admin.index') }}"> Employee management </a>
-    @endif
+        <a class="sideBar-btn" href="/logs"> Delivery Logs</a>
+        @if(user?.role === 'admin')
+            <a class="sideBar-btn" href="{{ route('admin.index') }}"> Employee management </a>
+        @endif
     </div>
 </div>
 
 <div id="notification">
-        <script>
-           if (!window.toastShown) { // chỉ chạy nếu chưa toast
+    <script>
+        if (!window.toastShown) { 
             window.toastShown = true;
             toastr.options = {
                 closeButton: true,
@@ -100,121 +64,72 @@
                 timeOut: "3000"
             };
         }
-        </script>
+    </script>
+</div>
 
-</header>
 <div class="container">
-        <!-- Profile Block -->
-        <div class="profile-block">
-            <div class="profile-avatar">
-                <i class="fa-solid fa-user-tie fa-2xl"></i>
-            </div>
-            <div class="profile-info">
-                <div class="profile-name">{{user?.fullName ?? 'Undefined'}}</div>
-                <div class="profile-role">{{ user?.email ?? 'None'}}</div>
-                <div class="profile-stats">
-                    <div class="stat-item">
-                        <span class="stat-value">Chức vụ</span>
-                        <span class="stat-label">{{ user?.role ?? 'None'}}</span>
-                    </div>
+    
+    <div class="profile-block">
+        <div class="profile-avatar">
+            <i class="fa-solid fa-user-tie fa-2xl"></i>
+        </div>
+        <div class="profile-info">
+            <div class="profile-name">{{user?.fullName ?? 'Guest'}}</div>
+            <div class="profile-role">{{ user?.email ?? 'Please Login'}}</div>
+            <div class="profile-stats">
+                <div class="stat-item">
+                    <span class="stat-value">Chức vụ</span>
+                    <span class="stat-label">{{ user?.role ?? 'N/A'}}</span>
                 </div>
             </div>
         </div>
+    </div>
 
-        <!-- Warehouse Grid -->
-        <div class="warehouse-grid">
-            <!-- Kho 1 -->
-            <div class="warehouse-card">
-                <div class="warehouse-icon">
-                    <i class="fa-solid fa-warehouse fa-xl"></i>
+    <div class="warehouse-grid">
+        
+        {{-- Kiểm tra nếu không có dữ liệu thì báo lỗi --}}
+        @if(!warehouses || warehouses.length === 0)
+            <p style="color: red; grid-column: span 2;">Không có dữ liệu kho nào được tìm thấy.</p>
+        @else
+            {{-- Vòng lặp hiển thị các kho --}}
+            @each(wh in warehouses)
+                <div class="warehouse-card" id="{{ wh.id }}-card">
+                    <div class="warehouse-icon">
+                        <i class="fa-solid fa-warehouse fa-xl"></i>
+                    </div>
+                    
+                    <div class="warehouse-name">{{ wh.name }}</div>
+                    
+                    <div class="warehouse-info">
+                        <div class="info-row">
+                            <span class="info-label">Sức chứa:</span>
+                            <span class="info-value">{{ wh.capacity }} items</span>
+                        </div>
+                        
+                        <div class="info-row">
+                            <span class="info-label">Hiện có:</span>
+                            <span class="info-value" id="{{ wh.id }}-current">
+                                {{ wh.current }} items
+                            </span>
+                        </div>
+                        
+                        <div class="info-row">
+                            <span class="info-label">Còn trống:</span>
+                            <span class="info-value" id="{{ wh.id }}-remain">
+                                {{ wh.remaining }} items
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <div class="warehouse-status status-active">Hoạt động</div>
                 </div>
-                <div class="warehouse-name">Kho A</div>
-                <div class="warehouse-info">
-                    <div class="info-row">
-                        <span class="info-label">Sức chứa:</span>
-                        <span class="info-value">50 items</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">Hiện có:</span>
-                        <span class="info-value">28 items</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">Còn trống:</span>
-                        <span class="info-value">22 items</span>
-                    </div>
-                </div>
-                <div class="warehouse-status status-active">Hoạt động</div>
-            </div>
+            @endeach
+        @endif
 
-            <div class="warehouse-card">
-                <div class="warehouse-icon">
-                    <i class="fa-solid fa-warehouse fa-xl"></i>
-                </div>
-                <div class="warehouse-name">Kho B</div>
-                <div class="warehouse-info">
-                    <div class="info-row">
-                        <span class="info-label">Sức chứa:</span>
-                        <span class="info-value">50 items</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">Hiện có:</span>
-                        <span class="info-value">28 items</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">Còn trống:</span>
-                        <span class="info-value">22 items</span>
-                    </div>
-                </div>
-                <div class="warehouse-status status-active">Hoạt động</div>
-            </div>
+    </div> </div>
 
-            <!-- Kho 3 -->
-            <div class="warehouse-card">
-                <div class="warehouse-icon">
-                    <i class="fa-solid fa-warehouse fa-xl"></i>
-                </div>
-                <div class="warehouse-name">Kho C</div>
-                <div class="warehouse-info">
-                    <div class="info-row">
-                        <span class="info-label">Sức chứa:</span>
-                        <span class="info-value">50 items</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">Hiện có:</span>
-                        <span class="info-value">28 items</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">Còn trống:</span>
-                        <span class="info-value">22 items</span>
-                    </div>
-                </div>
-                <div class="warehouse-status status-active">Hoạt động tốt</div>
-            </div>
-
-            <!-- Kho 4 -->
-            <div class="warehouse-card">
-                <div class="warehouse-icon">
-                    <i class="fa-solid fa-warehouse fa-xl"></i>
-                </div>
-                <div class="warehouse-name">Kho D</div>
-                <div class="warehouse-info">
-                    <div class="info-row">
-                        <span class="info-label">Sức chứa:</span>
-                        <span class="info-value">50 items</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">Hiện có:</span>
-                        <span class="info-value">28 items</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">Còn trống:</span>
-                        <span class="info-value">22 items</span>
-                    </div>
-                </div>
-                <div class="warehouse-status status-active">Hoạt động tốt</div>
-            </div>
-        </div>
-</div>
 <div class="deliveryLog">
+    </div>
 
-</div>
+</body>
+</html>
