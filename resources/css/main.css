@@ -1,188 +1,431 @@
-/* Container */
-.container {
-    position: fixed;
-    width: 100%;
-    padding: 0;
+/* resources/css/main.css - PHIÊN BẢN BIG SIZE */
+
+* {
     margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-/* Profile Block */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    /* Giữ nền gradient cho đẹp */
+    background: linear-gradient(135deg, #c9d2f1 0%, #c5d1f9 100%);
+    min-height: 100vh;
+    color: #1F2937;
+    padding-top: 70px;
+}
+
+/* --- SIDEBAR --- */
+.side-bar {
+    position: fixed;
+    top: 70px;
+    left: 0;
+    width: 260px; /* Tăng nhẹ độ rộng sidebar cho cân đối với web to */
+    height: calc(100vh - 70px);
+    background: #1E1B4B; 
+    z-index: 90;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    box-shadow: 4px 0 15px rgba(0,0,0,0.1);
+}
+
+.side-bar.active { transform: translateX(0); }
+
+.sideBar-content { padding: 25px; }
+
+.sideBar-item {
+    display: flex; align-items: center; gap: 15px;
+    padding: 15px 20px; /* Nút to hơn */
+    color: #A5B4FC;
+    text-decoration: none;
+    border-radius: 10px;
+    margin-bottom: 8px;
+    transition: all 0.2s;
+    font-weight: 500;
+    font-size: 1.05rem; /* Chữ menu to hơn */
+}
+
+.sideBar-item:hover {
+    background-color: #312E81;
+    color: #FFFFFF;
+}
+
+.sideBar-item i { width: 24px; text-align: center; font-size: 1.2rem; }
+
+.container {
+    width: 95%; 
+    max-width: 1920px;
+    margin: 0 auto;
+    padding: 40px 20px; 
+}
+
+/* --- PROFILE BLOCK --- */
 .profile-block {
-    background: linear-gradient(135deg, #3e70f9);
-    padding: 30px 40px;
-    display: flex;
-    align-items: center;
-    gap: 25px;
-}
-
-.profile-avatar {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    background: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #667eea;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-    flex-shrink: 0;
-    font-size: 28px;
-}
-
-
-.profile-info {
-    flex: 1;
-    color: white;
-}
-
-.profile-name {
-    font-size: 28px;
-    font-weight: bold;
-    margin-bottom: 5px;
-}
-
-.profile-role {
-    font-size: 16px;
-    opacity: 0.9;
-}
-
-.profile-stats {
-    display: flex;
-    gap: 30px;
-    margin-top: 15px;
-}
-
-.stat-item {
-    display: flex;
-    flex-direction: column;
-}
-
-.stat-value {
-    font-size: 14px;
-    font-weight: bold;
-}
-
-.stat-label {
-    color: #ffff;
-    font-weight: bold;
-    font-size: 20px;
- 
-}
-
-/* Warehouse Grid */
-.warehouse-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 25px;
-    padding: 30px 40px;
-    background: #f5f5f5;
-
-}
-
-.warehouse-card {
-    background: white;
-    border-radius: 12px;
-    padding: 25px;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.08);
-    transition: transform 0.3s, box-shadow 0.3s;
-    cursor: pointer;
-}
-
-.warehouse-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-}
-
-.warehouse-icon {
-    width: 60px;
-    height: 60px;
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 28px;
-    margin-bottom: 20px;
-}
-
-
-
-.warehouse-name {
-    font-size: 20px;
-    font-weight: bold;
-    color: #333;
-    margin-bottom: 10px;
-}
-
-.warehouse-info {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    color: #666;
-    font-size: 14px;
-}
-
-.info-row {
+    background: #1E3A8A;
+    border-radius: 16px;
+    padding: 40px; /* To hơn */
     display: flex;
     justify-content: space-between;
     align-items: center;
+    color: white;
+    margin-bottom: 40px; /* Cách xa grid bên dưới hơn */
+    box-shadow: 0 15px 30px -5px rgba(79, 70, 229, 0.3);
 }
 
-.info-label {
-    opacity: 0.7;
+.profile-header { display: flex; align-items: center; gap: 25px; }
+
+.profile-avatar {
+    width: 80px; height: 80px; /* Avatar to hơn */
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 32px;
+    backdrop-filter: blur(5px);
 }
 
-.info-value {
-    font-weight: 600;
-    color: #333;
+.profile-name { font-size: 1.8rem; font-weight: 700; margin-bottom: 5px; }
+.profile-role { font-size: 1.1rem; opacity: 0.9; }
+
+.stat-box {
+    background: rgba(255, 255, 255, 0.15);
+    padding: 15px 30px;
+    border-radius: 12px;
+    text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    min-width: 150px;
+}
+.stat-label { font-size: 0.9rem; display: block; opacity: 0.9; margin-bottom: 5px; }
+.stat-value { font-size: 1.4rem; font-weight: bold; }
+
+/* --- WAREHOUSE GRID (GIỮ 4 CỘT) --- */
+.warehouse-grid {
+    display: grid;
+    /* Mặc định chia 4 cột đều nhau */
+    grid-template-columns: repeat(4, 1fr); 
+    gap: 30px; /* Khoảng cách giữa các thẻ rộng hơn */
+}
+
+/* --- WAREHOUSE CARD (CHỈNH KÍCH CỠ TO LÊN) --- */
+.warehouse-card {
+    background: white;
+    border-radius: 16px; /* Bo góc tròn hơn */
+    padding: 30px; /* Nội dung bên trong thoáng hơn */
+    
+    border-top: 5px solid #4F46E5; /* Viền trên dày hơn */
+    border-bottom: 1px solid #E5E7EB;
+    border-left: 1px solid #E5E7EB;
+    border-right: 1px solid #E5E7EB;
+    
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    
+    /* QUAN TRỌNG: Thiết lập chiều cao tối thiểu để thẻ trông cao to */
+    min-height: 280px; 
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.warehouse-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px -10px rgba(79, 70, 229, 0.2);
+    border-color: #C7D2FE;
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 20px;
+}
+
+.warehouse-icon {
+    width: 60px; height: 60px; /* Icon to hơn */
+    background: #EEF2FF;
+    color: #4F46E5;
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px;
 }
 
 .warehouse-status {
-    margin-top: 15px;
-    padding: 8px 15px;
-    border-radius: 20px;
-    font-size: 13px;
-    font-weight: 600;
-    text-align: center;
+    font-size: 0.85rem; font-weight: 600;
+    padding: 6px 14px;
+    border-radius: 30px;
+}
+.status-active { background: #ECFDF5; color: #059669; }
+
+.warehouse-name {
+    font-size: 1.4rem; /* Tên kho to rõ ràng */
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 20px;
 }
 
-.status-active {
-    background: #d4edda;
-    color: #155724;
+.warehouse-info {
+    display: flex; flex-direction: column; gap: 12px;
+    margin-bottom: 25px;
+    flex-grow: 1; /* Đẩy nội dung giãn ra */
 }
 
-.status-warning {
-    background: #fff3cd;
-    color: #856404;
+.info-row {
+    display: flex; justify-content: space-between;
+    font-size: 1.05rem; /* Chữ thông số to hơn */
+}
+.info-label { color: #6B7280; }
+.info-value { font-weight: 700; color: #1F2937; }
+
+/* Progress Bar */
+.progress-track {
+    width: 100%; height: 10px; /* Thanh dày hơn chút */
+    background-color: #F3F4F6;
+    border-radius: 6px;
+    overflow: hidden;
+}
+.progress-fill {
+    height: 100%; background-color: #4F46E5;
+    border-radius: 6px; transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Responsive */
+/* --- RESPONSIVE (Xử lý khi màn hình nhỏ đi) --- */
+
+/* 1. Màn hình Laptop nhỏ (dưới 1400px):
+   Vẫn cố giữ 4 cột sẽ rất bé, nên chuyển sang 2 cột to đùng cho dễ nhìn. 
+   Nếu bạn nhất quyết muốn 4 cột ở đây, hãy sửa 1fr thành minmax(200px, 1fr) nhưng chữ sẽ bị chật. 
+   Khuyên dùng 2 cột ở kích thước này. */
 @media (max-width: 1200px) {
     .warehouse-grid {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(2, 1fr); 
     }
 }
 
+/* 2. Mobile (dưới 768px): 1 cột */
 @media (max-width: 768px) {
-    .warehouse-grid {
-        grid-template-columns: 1fr;
-        padding: 20px;
-    }
-    
-    .profile-block {
-        flex-direction: column;
-        text-align: center;
-        padding: 20px;
-    }
+    .warehouse-grid { grid-template-columns: 1fr; }
+    .profile-block { flex-direction: column; text-align: center; gap: 20px; }
+    .container { width: 100%; padding: 20px 15px; }
+}/* resources/css/main.css - PHIÊN BẢN BIG SIZE */
 
-    .profile-stats {
-        justify-content: center;
-    }
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    /* Giữ nền gradient cho đẹp */
+    background: linear-gradient(135deg, #EEF2FF 0%, #E0E7FF 100%);
+    min-height: 100vh;
+    color: #1F2937;
+    padding-top: 70px;
+}
+
+/* --- SIDEBAR --- */
+.side-bar {
+    position: fixed;
+    top: 70px;
+    left: 0;
+    width: 260px; /* Tăng nhẹ độ rộng sidebar cho cân đối với web to */
+    height: calc(100vh - 70px);
+    background: #1E1B4B; 
+    z-index: 90;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    box-shadow: 4px 0 15px rgba(0,0,0,0.1);
+}
+
+.side-bar.active { transform: translateX(0); }
+
+.sideBar-content { padding: 25px; }
+
+.sideBar-item {
+    display: flex; align-items: center; gap: 15px;
+    padding: 15px 20px; /* Nút to hơn */
+    color: #A5B4FC;
+    text-decoration: none;
+    border-radius: 10px;
+    margin-bottom: 8px;
+    transition: all 0.2s;
+    font-weight: 500;
+    font-size: 1.05rem; /* Chữ menu to hơn */
+}
+
+.sideBar-item:hover {
+    background-color: #312E81;
+    color: #FFFFFF;
+}
+
+.sideBar-item i { width: 24px; text-align: center; font-size: 1.2rem; }
+
+/* --- CONTAINER (QUAN TRỌNG: MỞ RỘNG RA 95%) --- */
+.container {
+    width: 95%; /* Dùng 95% màn hình thay vì max-width 1400px */
+    max-width: 1920px; /* Giới hạn tối đa cho màn hình siêu to khổng lồ */
+    margin: 0 auto;
+    padding: 40px 20px; /* Tăng padding trên dưới */
+}
+
+/* --- PROFILE BLOCK --- */
+.profile-block {
+    background: #1E3A8A;
+    border-radius: 16px;
+    padding: 40px; /* To hơn */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: white;
+    margin-bottom: 40px; /* Cách xa grid bên dưới hơn */
+    box-shadow: 0 15px 30px -5px rgba(79, 70, 229, 0.3);
+}
+
+.profile-header { display: flex; align-items: center; gap: 25px; }
+
+.profile-avatar {
+    width: 80px; height: 80px; /* Avatar to hơn */
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 32px;
+    backdrop-filter: blur(5px);
+}
+
+.profile-name { font-size: 1.8rem; font-weight: 700; margin-bottom: 5px; }
+.profile-role { font-size: 1.1rem; opacity: 0.9; }
+
+.stat-box {
+    background: rgba(255, 255, 255, 0.15);
+    padding: 15px 30px;
+    border-radius: 12px;
+    text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    min-width: 150px;
+}
+.stat-label { font-size: 0.9rem; display: block; opacity: 0.9; margin-bottom: 5px; }
+.stat-value { font-size: 1.4rem; font-weight: bold; }
+
+/* --- WAREHOUSE GRID (GIỮ 4 CỘT) --- */
+.warehouse-grid {
+    display: grid;
+    /* Mặc định chia 4 cột đều nhau */
+    grid-template-columns: repeat(4, 1fr); 
+    gap: 30px; /* Khoảng cách giữa các thẻ rộng hơn */
+}
+
+/* --- WAREHOUSE CARD (CHỈNH KÍCH CỠ TO LÊN) --- */
+.warehouse-card {
+    background: white;
+    border-radius: 16px; /* Bo góc tròn hơn */
+    padding: 30px; /* Nội dung bên trong thoáng hơn */
     
-    .profile-name {
-        font-size: 24px;
-    }
+    border-top: 5px solid #4F46E5; /* Viền trên dày hơn */
+    border-bottom: 1px solid #E5E7EB;
+    border-left: 1px solid #E5E7EB;
+    border-right: 1px solid #E5E7EB;
     
-    .stat-value {
-        font-size: 20px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    
+    /* QUAN TRỌNG: Thiết lập chiều cao tối thiểu để thẻ trông cao to */
+    min-height: 280px; 
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.warehouse-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px -10px rgba(79, 70, 229, 0.2);
+    border-color: #C7D2FE;
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 20px;
+}
+
+.warehouse-icon {
+    width: 60px; height: 60px; /* Icon to hơn */
+    background: #EEF2FF;
+    color: #4F46E5;
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px;
+}
+
+.warehouse-status {
+    font-size: 0.85rem; font-weight: 600;
+    padding: 6px 14px;
+    border-radius: 30px;
+}
+.status-active { background: #ECFDF5; color: #059669; }
+
+.warehouse-name {
+    font-size: 1.4rem; /* Tên kho to rõ ràng */
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 20px;
+}
+
+.warehouse-info {
+    display: flex; flex-direction: column; gap: 12px;
+    margin-bottom: 25px;
+    flex-grow: 1; /* Đẩy nội dung giãn ra */
+}
+
+.info-row {
+    display: flex; justify-content: space-between;
+    font-size: 1.05rem; /* Chữ thông số to hơn */
+}
+.info-label { color: #6B7280; }
+.info-value { font-weight: 700; color: #1F2937; }
+
+/* Progress Bar */
+.progress-track {
+    width: 100%; height: 10px; /* Thanh dày hơn chút */
+    background-color: #F3F4F6;
+    border-radius: 6px;
+    overflow: hidden;
+}
+.progress-fill {
+    height: 100%; background-color: #4F46E5;
+    border-radius: 6px; transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.banner {
+    display: flex;
+    justify-content: center;
+    overflow: hidden;     
+    margin-top: 10px;
+    background-color: #010e23; 
+    border-radius: 16px;
+}
+
+.banner-img {
+    max-width: 1920px;   
+    height: 320px;
+    border-radius: 16px;
+    display: block;
+    object-fit: contain; 
+    -webkit-mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+    mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+}
+
+@media (max-width: 1200px) {
+    .warehouse-grid {
+        grid-template-columns: repeat(2, 1fr); 
     }
+}
+
+/* 2. Mobile (dưới 768px): 1 cột */
+@media (max-width: 768px) {
+    .warehouse-grid { grid-template-columns: 1fr; }
+    .profile-block { flex-direction: column; text-align: center; gap: 20px; }
+    .container { width: 100%; padding: 20px 15px; }
 }

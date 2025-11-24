@@ -1,108 +1,114 @@
+/* resources/css/header.css */
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    line-height: 1.6;
-    color: #333;
-    padding-top: 50px;
-}
-
-/* ===== Header + Nav chung ===== */
+/* Reset cơ bản cho header */
 header {
     position: fixed;
-    background: #1E3A8A;
-    color: white;
+    background: rgba(255, 255, 255, 0.9); /* Kính mờ */
+    backdrop-filter: blur(10px);
     width: 100%;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
     top: 0;
-    margin-bottom: 0.3rem;
-    z-index: 10;
-    padding: 10px;
-}
-
-#username {
-    margin: 0;
-    padding: 0;
-    color: orange;
+    z-index: 100;
+    height: 70px;
+    border-bottom: 1px solid #e5e7eb;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
 }
 
 nav {
-
+    width: 95%; 
+    max-width: 1950px;
     margin: 0 auto;
-    padding: 0 10px;
+    padding: 0 20px;
+    height: 100%;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    flex-wrap: wrap;
+}
+
+.nav-left {
+    display: flex;
+    align-items: center;
+    gap: 15px;
 }
 
 .title {
-  color: #fff; /* chữ trắng */
-  font-size: large; /* to vừa phải, bạn có thể tăng lên */
-  font-weight: 700; /* đậm hơn */
-  letter-spacing: 2px; /* giãn nhẹ cho sang */
-  text-transform: uppercase; /* đảm bảo in hoa */
-  text-align: center; /* căn giữa */
-  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.4); /* đổ bóng nhẹ để dễ đọc trên nền tối */
-  font-family: 'Poppins', 'Roboto', sans-serif; /* font hiện đại */
+    color: #1E3A8A; /* Màu Indigo chủ đạo */
+    font-size: 1.1rem;
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-family: 'Segoe UI', sans-serif;
+    margin: 0;
 }
 
-.sideBar-btn {
-    background: #1e3a8a;
+.side-bar-btn {
+    color: #6B7280;
     cursor: pointer;
-    transition: all 0.3s ease;
+    padding: 8px;
+    border-radius: 6px;
+    transition: all 0.2s ease;
 }
 
-.sideBar-btn:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 1px 2px #1e3a8a;
+.side-bar-btn:hover {
+    background-color: #F3F4F6;
+    color: #4F46E5;
 }
 
-.nav-menu {
+/* User Menu & Buttons */
+.user-menu {
     display: flex;
-    list-style: none;
-    gap: 2rem;
     align-items: center;
+}
+
+.logged-in-box {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    font-weight: 600;
+    color: #374151;
+}
+
+.logout {
+    color: #EF4444; /* Đỏ nhẹ */
+    transition: transform 0.2s;
+}
+.logout:hover {
+    transform: scale(1.1);
+}
+
+#authDiv {
+    display: flex;
+    gap: 10px;
 }
 
 .header-btn {
     cursor: pointer;
-    color: rgb(0, 0, 0);
-    text-decoration: none;
-    padding: 0.5rem 1rem;
-    border-radius: 5px;
-    transition: background-color 0.3s ease;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-weight: 500;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    border: none;
 }
 
-.nav-menu a:hover {
-    background-color: rgba(132, 143, 195, 0.2);
+.btn-signin {
+    background-color: #4F46E5;
+    color: white;
+}
+.btn-signin:hover {
+    background-color: #4338ca;
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
 }
 
-.user-menu {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
+.btn-signup {
+    background-color: transparent;
+    color: #4F46E5;
+    border: 1px solid #4F46E5;
+}
+.btn-signup:hover {
+    background-color: #EEF2FF;
 }
 
-.user-menu span {
-    color: rgb(0, 0, 0);
-    text-decoration: none;
-    padding: 0.5rem 1rem;
-    border-radius: 5px;
-    transition: background-color 0.3s ease;
-}
-
-.user-menu a {
-    padding-left: 0.2rem;
-    cursor: pointer;
-    text-decoration: none;
-}
-
+/* Modal Styles */
 .modal {
     display: none;
     position: fixed;
@@ -111,188 +117,82 @@ nav {
     top: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.7);
-    backdrop-filter: blur(5px);
-    animation: fadeIn 0.3s ease;
-}
-
-
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-
-@keyframes slideDown {
-    from {
-        opacity: 0;
-        transform: translateY(-30px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    background-color: rgba(17, 24, 39, 0.7); /* Nền tối hơn */
+    backdrop-filter: blur(4px);
+    animation: fadeIn 0.2s ease;
 }
 
 .modal-content {
     background: #fff;
-    margin: 10% auto;
-    padding: 40px;
+    margin: 8% auto;
+    padding: 30px;
     width: 400px;
     max-width: 90%;
-    border-radius: 15px;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    border-radius: 16px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
     position: relative;
-    animation: slideDown 0.4s ease;
-    border: 1px solid rgba(0, 0, 0, 0.1);
+    animation: slideDown 0.3s ease;
 }
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slideDown { from { transform: translateY(-20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
 .close {
     position: absolute;
     right: 20px;
     top: 20px;
     font-size: 24px;
-    font-weight: bold;
-    color: #999;
+    color: #9CA3AF;
     cursor: pointer;
-    transition: all 0.3s ease;
-    width: 35px;
-    height: 35px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
+    transition: color 0.2s;
 }
-
-.close:hover {
-    color: #e74c3c;
-    background: rgba(231, 76, 60, 0.1);
-    transform: scale(1.1);
-}
+.close:hover { color: #1F2937; }
 
 h2 {
-    color: #333;
-    font-size: 26px;
-    font-weight: 600;
-    margin-bottom: 25px;
+    color: #111827;
+    margin-bottom: 20px;
     text-align: center;
-    font-family: 'Segoe UI', sans-serif;
+    font-weight: 700;
 }
 
-.login-form {
+.auth-form {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 15px;
 }
 
-label {
-    color: #555;
+.form-group label {
+    display: block;
+    font-size: 0.9rem;
+    color: #374151;
+    margin-bottom: 5px;
     font-weight: 500;
-    font-size: 14px;
-    margin-bottom: 6px;
-    font-family: 'Segoe UI', sans-serif;
 }
 
-.input-login {
+.input-field {
     width: 100%;
-    height: 40px;
-    border: 2px solid #e0e0e0;
+    padding: 10px 12px;
+    border: 1px solid #D1D5DB;
     border-radius: 8px;
-    font-size: 15px;
-    transition: all 0.3s ease;
-    font-family: 'Segoe UI', sans-serif;
-    background: #fafafa;
-}
-
-.input-login:focus {
+    font-size: 0.95rem;
     outline: none;
-    border-color: #4a90e2;
-    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
-    background: #fff;
-    transform: translateY(-1px);
+    transition: border-color 0.2s;
 }
 
-.btn-login {
-    background: linear-gradient(45deg, #3498db, #2980b9);
+.input-field:focus {
+    border-color: #4F46E5;
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+.btn-submit {
+    background: #4F46E5;
     color: white;
+    padding: 12px;
     border: none;
-    padding: 14px 20px;
     border-radius: 8px;
-    font-size: 16px;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.3s ease;
-    font-family: 'Segoe UI', sans-serif;
     margin-top: 10px;
-    box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+    transition: background 0.2s;
 }
-
-.btn-login:hover {
-    background: linear-gradient(45deg, #2980b9, #1f618d);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(52, 152, 219, 0.4);
-}
-
-.btn-login:active {
-    transform: translateY(0);
-}
-
-
-.side-bar {
-    position: fixed;
-    top: 0;         /* để nó dính từ trên cùng */
-    left: 0;
-    width: 200px;   /* chiều rộng */
-    height: 100vh;  /* full màn hình */
-    background: #1d46b7;
-    z-index: 1000;  /* cao hơn header */
-    transform: translateX(-100%); /* ẩn ban đầu */
-    transition: transform 0.3s ease;
-}
-
-.side-bar.active {
-  transform: translateX(0); /* hiện ra */
-}
-
-.sideBar {
-    margin-top: 50px;
-}
-
-.side-bar-btn {
-    margin: 0 5px;
-    cursor: pointer;
-}
-
-
-.sideBar-btn {
-    width: 100%;
-    height: 40px;
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s ease;
-    color: white;
-    padding: 8px;
-    background-color: #1e3a8a;
-    font-size: 14px;
-    margin: 15px 0;
-    text-decoration: none;
-}
-
-.sideBar-btn:hover {
-    background: rgba(255, 255, 255, 0.1);
-}
-
-.sideBar-btn:active {
-    background: rgba(255, 255, 255, 0.2);
-}
-
-.sideBar-btn i {
-    font-size: 20px;
-}
-
-.logout {
-    color: red;
-}
+.btn-submit:hover { background: #4338ca; }

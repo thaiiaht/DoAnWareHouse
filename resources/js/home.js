@@ -131,7 +131,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // LOGOUT
   // --------------------------
   document.addEventListener('click', async (e) => {
-    if (e.target && e.target.matches('#logoutBtn')) {
+    if (e.target && e.target.closest('#logoutBtn')) {
       e.preventDefault()
       try {
         const res = await fetch('/logout', {
