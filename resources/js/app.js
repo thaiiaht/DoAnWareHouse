@@ -2,6 +2,8 @@ import { Transmit } from '@adonisjs/transmit-client'
 import toastr from 'toastr';
 import 'toastr/build/toastr.min.css';
 
+const currentRole = window.UserRole
+
 const transmit = new Transmit({
   baseUrl: window.location.origin})
 
@@ -9,12 +11,23 @@ document.addEventListener("DOMContentLoaded", () => {
     initRealtime()
 })
 
-
 async function initRealtime() {
-    // thông báo khi sắp có hàng đến kiot
-    const sub = transmit.subscription('/notification')
+    // thông báo khi sắp tới kiot nào
+    const isub = transmit.subscription('/notification/incoming')
+    isub.onMessage((payload) => {
+        if (payload.kioskName === currentRole) {
+            toastr.success(payload.message, payload.title);
+        }
+    })
+    await isub.create()
+
+    // thông báo khi đã có hàng đến kiot
+    const sub = transmit.subscription('/notification/arrived')
     sub.onMessage((payload) => {
-        toastr.success(payload.message, payload.title);
+        // toastr.success(payload.message, payload.title);
+        if (payload.kioskName === currentRole) {
+            showPopup(payload)
+        }
     })
     await sub.create()
 
@@ -61,4 +74,43 @@ async function initRealtime() {
     })
 }
 
+// 3. Hàm hiện Popup SweetAlert2
+function showPopup(data) {
+    Swal.fire({
+    title: '🚚 ' + data.title,
+    text: data.message,
+    icon: 'info',
+    showCancelButton: false,
+    confirmButtonColor: '#3085d6',
+    confirmButtonText: '✅ Đã xong (Về vị trí cũ)',
+    allowOutsideClick: false // Bắt buộc phải bấm nút
+    }).then((result) => {
+    
+    // 4. Khi người dùng bấm nút "Đã xong"
+    if (result.isConfirmed) {
+        sendResetCommand(data.kiotId)
+    }
+  })
+}
 
+async function sendResetCommand(kiotId) {
+    //   try {
+    //     const response = await fetch('/api/kiot/reset', {
+    //       method: 'POST',
+    //       headers: {
+    //         'Content-Type': 'application/json',
+    //         // Nhớ thêm CSRF Token nếu project có bật
+    //       },
+    //       body: JSON.stringify({ kiot: kiotId })
+    //     })
+
+    //     if (response.ok) {
+    //       Swal.fire('Thành công!', 'Đã gửi lệnh reset xuống ESP.', 'success')
+    //     } else {
+    //       Swal.fire('Lỗi!', 'Không gửi được lệnh.', 'error')
+    //     }
+    //   } catch (error) {
+    //     console.error(error)
+    //   }
+    window.location.reload()
+    }

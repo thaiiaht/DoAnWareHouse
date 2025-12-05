@@ -1,11 +1,23 @@
 import { HttpContext } from '@adonisjs/core/http'
 import DeliveryLog from '#models/delivery_log'
 import transmit from '@adonisjs/transmit/services/main'
+import mqttService from '#services/mqtt_service'
 
 export default class WarehouseController {
     async index({ view }: HttpContext) {
         const log = await DeliveryLog.all()
         return view.render('deliveryLogs', { log })
+    }
+
+    async arrival({ request, response }: HttpContext) {
+        const { kiot } = request.body()
+        const payload = {
+        title: 'Xe hàng đang đến!',
+        message: `Xe hàng đang tới ${kiot}. Hãy chú ý`,
+        kioskName: kiot
+      }
+       transmit.broadcast(`/notification/incoming`, payload)
+       return response.ok({ success: true })
     }
 
     async handleArrival({ request, response }: HttpContext) {
@@ -17,9 +29,18 @@ export default class WarehouseController {
 
         const payload = {
             title: 'Xe hàng đang đến!',
-            message: `Xe hàng đang tới ${kiot} và mang theo ${quantity} kiện hàng.`
+            message: `Xe hàng đã tới ${kiot} và mang theo ${quantity} kiện hàng.`,
+            kioskName: kiot
         }
-        transmit.broadcast(`/notification`, payload)
+        transmit.broadcast(`/notification/arrived`, payload)
         return response.ok({ success: true })
     }
+
+    async resetKiot({ response }: HttpContext) {
+        const topic =  'car/reset'
+        const message = JSON.stringify({ command: "RESET_POS" })
+        mqttService.publish(topic, message)
+        return response.ok({ message: 'Command sent' })
+    }
 }
+
