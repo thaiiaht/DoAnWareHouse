@@ -25,7 +25,7 @@ class MqttService {
     })
 
     this.client.on('error', (err) => {
-      //console.error('❌ MQTT Error:', err)
+      console.error('❌ MQTT Error:', err)
     })
     
     // Xử lý tin nhắn nhận được từ ESP
@@ -53,7 +53,7 @@ class MqttService {
         message: `Xe hàng đang tới ${data.kiot}. Hãy chú ý`,
         kioskName: data.kiot
       }
-      transmit.broadcast(`/notification/incoming`, payload)
+      await transmit.broadcast(`/notification/incoming`, payload)
     } catch (error) {
       console.error('❌ Error:', error)  
     }
@@ -74,7 +74,8 @@ class MqttService {
       message: `Xe hàng đã tới ${newLog.kiot} và mang theo ${newLog.quantity} kiện hàng.`,
       kioskName: newLog.kiot
     }
-    transmit.broadcast(`/notification/arrived`, payload)
+    console.log(payload)
+    await transmit.broadcast(`/notification/arrived`, payload)
     } catch (error) {
       console.error('❌ Error:', error)
     }
