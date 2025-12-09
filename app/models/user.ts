@@ -18,7 +18,7 @@ export default class User extends compose(BaseModel, AuthFinder) {
   declare fullName: string | null
 
   @column()
-  declare role: 'admin' | 'staff' | 'kho-a' | 'kho-b' | 'kho-c' | 'kho-d'
+  declare role: 'admin' | 'staff' | 'kho-a' | 'kho-b' | 'kho-c' | 'kho-d' |'gatekeeper'
 
   @column()
   declare email: string

@@ -42,5 +42,19 @@ export default class WarehouseController {
         mqttService.publish(topic, message)
         return response.ok({ message: 'Command sent' })
     }
+
+    async startImport({ response }: HttpContext) {
+        const topic = 'car/import/start'
+        const message = JSON.stringify({ command: "START_IMPORT"})
+        mqttService.publish(topic, message)
+        return response.ok({ message: 'Command sent' })
+    }
+
+        async endImport({ response }: HttpContext) {
+        const topic = 'car/import/end'
+        const message = JSON.stringify({ command: "END_IMPORT"})
+        mqttService.publish(topic, message)
+        return response.ok({ message: 'Command sent' })
+    }
 }
 

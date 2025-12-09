@@ -130,6 +130,15 @@
             </div>
         </div>
         <div class="profile-stats">
+                {{-- LOGIC CHECK ROLE: Chỉ hiện nút nếu là Gatekeeper --}}
+            @if(user?.role === 'gatekeeper') 
+                <button id="btnGateAction" class="btn-gate-action">
+                    <div class="btn-icon">
+                        <i class="fa-solid fa-truck-ramp-box"></i>
+                    </div>
+                    <span>Bắt đầu nhập hàng</span>
+                </button>
+            @endif
             <div class="stat-box">
                 <span class="stat-label">Vai trò</span>
                 <span class="stat-value">{{ user?.role ?? 'Guest'}}</span>

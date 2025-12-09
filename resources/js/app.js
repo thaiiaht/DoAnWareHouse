@@ -1,6 +1,7 @@
 import { Transmit } from '@adonisjs/transmit-client'
 import toastr from 'toastr';
 import 'toastr/build/toastr.min.css';
+import Swal from 'sweetalert2';
 
 const currentRole = window.UserRole
 
@@ -15,7 +16,7 @@ async function initRealtime() {
     // thông báo khi sắp tới kiot nào
     const isub = transmit.subscription('/notification/incoming')
     isub.onMessage((payload) => {
-        if (payload.kioskName === currentRole) {
+        if (payload.kioskName === currentRole || currentRole === "admin") {
             toastr.success(payload.message, payload.title);
         }
     })
@@ -25,7 +26,7 @@ async function initRealtime() {
     const sub = transmit.subscription('/notification/arrived')
     sub.onMessage((payload) => {
         // toastr.success(payload.message, payload.title);
-        if (payload.kioskName === currentRole) {
+        if (payload.kioskName === currentRole || currentRole === "admin") {
             showPopup(payload)
         }
     })
@@ -114,3 +115,75 @@ async function sendResetCommand(kiotId) {
     //   }
     window.location.reload()
     }
+
+//  Function gatekeeper
+document.addEventListener('DOMContentLoaded', () => {
+    const btnGateAction = document.getElementById('btnGateAction');
+
+    if (btnGateAction) {
+        btnGateAction.addEventListener('click', function(e) {
+            e.preventDefault();
+
+            Swal.fire({
+                // ... (Phần HTML giữ nguyên) ...
+                title: '<span style="color: #2f3542; font-weight:700">Hệ thống đang chạy</span>',
+                html: `
+                    <div class="swal-iot-container">
+                        <div class="radar-wave"></div>
+                        <div class="radar-wave"></div>
+                        <div class="radar-wave"></div>
+                        <div class="radar-emitter">
+                            <i class="fa-solid fa-truck-fast fa-xl" style="color: #00d2d3;"></i>
+                        </div>
+                    </div>
+                    <div style="text-align: left; font-size: 14px; color: #57606f; padding: 0 20px;">
+                        <p><i class="fa-solid fa-circle-check" style="color: #2ed573"></i> Đã gửi lệnh mở cổng.</p>
+                        <p><i class="fa-solid fa-wifi" style="color: #ffa502"></i> Đang trong quá trình nhập hàng</p>
+                        <p class="animate-pulse" style="margin-top:10px; font-style: italic; text-align:center">
+                            Vui lòng không tắt trình duyệt...
+                        </p>
+                    </div>
+                `,
+                showCancelButton: false,
+                confirmButtonText: '<i class="fa-solid fa-stop"></i> Đã nhập hàng xong',
+                confirmButtonColor: '#ff4757',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+
+                // 1. GỬI START
+                didOpen: async () => {
+                    Swal.showLoading();
+                    
+                    try {
+                        // Cứ gửi, không quan tâm kết quả
+                        await fetch('/api/iot/start', { method: 'POST' });
+                    } catch (e) {
+                        console.log('Lỗi gửi start (kệ nó):', e);
+                    } finally {
+                        // QUAN TRỌNG: Dù lỗi hay không thì vẫn tắt loading để hiện nút bấm
+                        Swal.hideLoading(); 
+                    }
+                },
+
+                // 2. GỬI STOP
+                preConfirm: async () => {
+                    try {
+                        await fetch('/api/iot/end', { method: 'POST' });
+                    } catch (e) {
+                        console.log('Lỗi gửi end (kệ nó):', e);
+                    }
+                }
+            }).then((result) => {
+                // (Tùy chọn) Hiện thông báo nhỏ khi xong
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Hoàn tất',
+                        timer: 1500,
+                        showConfirmButton: false
+                    });
+                }
+            });
+        });
+    }
+});

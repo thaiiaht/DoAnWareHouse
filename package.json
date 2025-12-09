@@ -79,6 +79,7 @@
     "quill": "^2.0.3",
     "reflect-metadata": "^0.2.2",
     "slugify": "^1.6.6",
+    "sweetalert2": "^11.26.4",
     "tailwindcss": "^4.1.11",
     "toastr": "^2.1.4",
     "uuid": "^11.1.0"

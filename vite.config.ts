@@ -16,4 +16,8 @@ export default defineConfig({
       reload: ['resources/views/**/*.edge'],
     }),
   ],
+    server: {
+    host: true,
+    allowedHosts: ["myapp.loca.lt"]
+  },
 })

@@ -22,10 +22,11 @@ class MqttService {
       this.subscribe('car/incoming')
       this.subscribe('car/arrived')
       this.subscribe('car/reset')
+      this.subscribe('car/import/start')
+      this.subscribe('car/import/end')
     })
 
-    this.client.on('error', (err) => {
-      console.error('❌ MQTT Error:', err)
+    this.client.on('error', () => {
     })
     
     // Xử lý tin nhắn nhận được từ ESP
