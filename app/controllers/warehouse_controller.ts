@@ -5,7 +5,7 @@ import mqttService from '#services/mqtt_service'
 
 export default class WarehouseController {
     async index({ view }: HttpContext) {
-        const log = await DeliveryLog.all()
+        const log = await DeliveryLog.query().orderBy('created_at', 'desc')
         return view.render('deliveryLogs', { log })
     }
 

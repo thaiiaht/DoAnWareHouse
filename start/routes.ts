@@ -7,6 +7,7 @@ import { middleware } from './kernel.js'
 import '#start/routes/admin'
 import '#start/routes/warehouse'
 import '#start/routes/home'
+import '#start/routes/carControl'
 
 transmit.registerRoutes()
 

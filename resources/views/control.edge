@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Controller</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+        margin: 0;
+        padding: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: #e3f0ff;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+        touch-action: none;
+        user-select: none;
+        position: relative; /* Để làm mốc cho nút Home */
+    }
+
+    /* --- NÚT HOME (GÓC TRÁI TRÊN) --- */
+    .home-btn {
+        position: absolute;
+        top: 25px;
+        left: 25px;
+        width: 50px;
+        height: 50px;
+        background: #1e3a8a; 
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 25%; 
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: #ddd;
+        text-decoration: none;
+        transition: background 0.2s, transform 0.1s;
+        z-index: 100;
+        cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
+    }
+    
+    .home-btn:active {
+        background: rgba(255, 255, 255, 0.3);
+        transform: scale(0.95);
+    }
+    
+    .home-btn svg {
+        width: 24px;
+        height: 24px;
+        fill: currentColor;
+    }
+
+    /* --- KHUNG ĐIỀU KHIỂN --- */
+    .dpad-container {
+        display: grid;
+        grid-template-columns: 100px 100px 100px;
+        grid-template-rows: 100px 100px 100px;
+        gap: 10px;
+    }
+
+    .btn {
+        width: 100%;
+        height: 100%;
+        background: #333;
+        border-radius: 15px;
+        box-shadow: 0 4px 0 #000;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 40px;
+        color: #ddd;
+        cursor: pointer;
+        transition: transform 0.1s, background 0.1s;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    .btn:active, .btn.active-key {
+        background: #007aff;
+        color: white;
+        transform: translateY(4px);
+        box-shadow: none;
+    }
+
+    #btn-w { grid-column: 2; grid-row: 1; }
+    #btn-a { grid-column: 1; grid-row: 2; }
+    #btn-d { grid-column: 3; grid-row: 2; }
+    #btn-s { grid-column: 2; grid-row: 3; }
+
+    .center-decor {
+        grid-column: 2; 
+        grid-row: 2;
+        background: #222;
+        border-radius: 50%;
+        margin: 20px;
+        box-shadow: inset 0 2px 5px rgba(0,0,0,0.5);
+    }
+  </style>
+</head>
+<body>
+
+  <a href="/" class="home-btn" aria-label="Homepage">
+    <svg viewBox="0 0 24 24">
+      <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+    </svg>
+  </a>
+
+  <div class="dpad-container">
+    <div class="btn" id="btn-w">▲</div>
+    <div class="btn" id="btn-a">◀</div>
+    <div class="center-decor"></div>
+    <div class="btn" id="btn-d">▶</div>
+    <div class="btn" id="btn-s">▼</div>
+  </div>
+
+  <script>
+    let lastSentTime = 0;
+    const SEND_INTERVAL = 50; 
+    let currentCmd = [0, 0];
+    const keys = { w: false, s: false, a: false, d: false };
+
+    const send = async (speed, angle) => {
+      if (currentCmd[0] === speed && currentCmd[1] === angle) return;
+      currentCmd = [speed, angle];
+
+      const now = Date.now();
+      if (now - lastSentTime < SEND_INTERVAL && (speed !== 0 || angle !== 0)) return;
+      lastSentTime = now;
+
+      try {
+        await fetch('/cmd', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(currentCmd),
+          keepalive: true 
+        });
+      } catch (err) { }
+    };
+
+    const updateDrive = () => {
+      let v = 0, a = 0;
+      if (keys.w) v = 100;
+      if (keys.s) v = -100;
+      if (keys.a) a = -45; 
+      if (keys.d) a = 45;  
+      
+      ['w','a','s','d'].forEach(k => {
+          document.getElementById(`btn-${k}`).classList.toggle('active-key', keys[k]);
+      });
+      
+      send(v, a);
+    };
+
+    const handleKey = (key, state) => {
+      const k = key.toLowerCase();
+      if (keys[k] !== undefined) {
+        keys[k] = state;
+        updateDrive();
+      }
+    };
+
+    const setupButton = (btnId, keyName) => {
+        const btn = document.getElementById(btnId);
+        const start = (e) => { e.preventDefault(); handleKey(keyName, true); };
+        const end = (e) => { e.preventDefault(); handleKey(keyName, false); };
+
+        btn.addEventListener('touchstart', start, { passive: false });
+        btn.addEventListener('mousedown', start);
+        btn.addEventListener('touchend', end);
+        btn.addEventListener('mouseup', end);
+        btn.addEventListener('mouseleave', end);
+    };
+
+    setupButton('btn-w', 'w');
+    setupButton('btn-s', 's');
+    setupButton('btn-a', 'a');
+    setupButton('btn-d', 'd');
+
+    window.addEventListener('keydown', (e) => {
+        if(['w','a','s','d'].includes(e.key.toLowerCase())) e.preventDefault();
+        handleKey(e.key, true);
+    });
+    window.addEventListener('keyup', (e) => handleKey(e.key, false));
+    window.addEventListener('blur', () => {
+      Object.keys(keys).forEach(k => keys[k] = false);
+      updateDrive();
+    });
+  </script>
+</body>
+</html>
