@@ -2,6 +2,7 @@ import { HttpContext } from '@adonisjs/core/http'
 import DeliveryLog from '#models/delivery_log'
 import transmit from '@adonisjs/transmit/services/main'
 import mqttService from '#services/mqtt_service'
+import { kiotMap } from '../Helpers/kiotMap.js'
 
 export default class WarehouseController {
     async index({ view }: HttpContext) {
@@ -44,9 +45,39 @@ export default class WarehouseController {
     }
 
     async startImport({ response }: HttpContext) {
+        const kiotConfig = [
+            { key: 'kho-a' },
+            { key: 'kho-b' },
+            { key: 'kho-c' },
+            { key: 'kho-d' },
+        ]
+        const warehouses = await Promise.all(kiotConfig.map(async (config) => {
+            const Model = kiotMap[config.key as keyof typeof kiotMap] // Đảm bảo biến kiotMap đã được import hoặc khai báo
+            const CAPACITY = 50
+
+            if (!Model) return { id: config.key, remaining: CAPACITY }
+
+            // Chạy song song 2 query In/Out để giảm thời gian chờ database
+            const [inRes, outRes] = await Promise.all([
+                Model.query().where('type', 'in').sum('quantity as total'),
+                Model.query().where('type', 'out').sum('quantity as total')
+            ])
+            
+            const totalIn = Number(inRes[0].$extras.total) || 0
+            const totalOut = Number(outRes[0].$extras.total) || 0
+
+            return {
+                id: config.key,
+                remaining: CAPACITY - (totalIn - totalOut)
+            }
+        }))
+
         const topic = 'car/import/start'
-        const message = JSON.stringify({ command: "START_IMPORT"})
-        mqttService.publish(topic, message)
+        const payload = JSON.stringify({ 
+            command: "START_IMPORT",
+            warehouses: warehouses
+        })
+        mqttService.publish(topic, payload)
         return response.ok({ message: 'Command sent' })
     }
 

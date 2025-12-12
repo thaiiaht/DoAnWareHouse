@@ -27,6 +27,8 @@ class CarControlService {
       console.log('🏎️ Car Control Service: Connected!')
       // Chỉ subscribe topic trạng thái xe
       this.subscribe('car/st')
+      this.subscribe('car/import/start')
+      this.subscribe('car/import/end')
     })
 
     this.client.on('error', (err) => {
