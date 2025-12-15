@@ -5,8 +5,9 @@ import { kiotMap } from '../Helpers/kiotMap.js'
 export default class HomeController {
 
     async store({ request, response }: HttpContext ) {
-        const { kiotName, type, quantity } = request.body()
+        const { kiotName, container_uid, item_type_name, quantity } = request.body()
         const CAPACITY_LIMIT = 50
+        let type: 'in' | 'out' | null = null
         const KiotModel = kiotMap[kiotName as keyof typeof kiotMap]
 
         if (!KiotModel) {
@@ -15,22 +16,20 @@ export default class HomeController {
             })
         }
 
-        // Tính tổng nhập (IN)
-        const totalInResult = await KiotModel.query()
-            .where('type', 'in')
-            .sum('quantity as total')
+        const existed = await KiotModel
+            .query()
+            .where('container_uid', container_uid)
+            .first()
 
-        // Tính tổng xuất 
-        const totalOutResult = await KiotModel.query()
-            .where('type', 'out')
+        // Tính tổng
+        const total = await KiotModel.query()
             .sum('quantity as total')
 
         // Lấy giá trị ra ( nếu null thì là 0)
-        const totalIn = Number(totalInResult[0].$extras.total) || 0
-        const totalOut = Number(totalOutResult[0].$extras.total) || 0
+        const totalIn = Number(total[0].$extras.total) || 0
         
         // Tồn kho thực tế
-        const currentStock = totalIn - totalOut
+        const currentStock = totalIn
 
         // Tính tồn kho mới khi request
         let newStock = currentStock
@@ -39,6 +38,14 @@ export default class HomeController {
         if (type === 'in') {
             newStock = currentStock + quantityNum
         } else if (type === 'out') {
+            newStock = currentStock - quantityNum
+        }
+
+        if ( !existed ) {
+            type = "in"
+            newStock = currentStock + quantityNum
+        } else {
+            type = "out"
             newStock = currentStock - quantityNum
         }
 
@@ -55,7 +62,8 @@ export default class HomeController {
 
         await KiotModel.create({
             kiotName,
-            type:type,
+            container_uid,
+            item_type_name,
             quantity: quantityNum,
         })
 

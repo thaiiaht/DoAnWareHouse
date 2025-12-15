@@ -26,20 +26,16 @@ export default class AuthController {
             }
 
             // Tính toán
-            const inRes = await Model.query().where('type', 'in').sum('quantity as total')
-            const outRes = await Model.query().where('type', 'out').sum('quantity as total')
-            
-            const totalIn = Number(inRes[0].$extras.total) || 0
-            const totalOut = Number(outRes[0].$extras.total) || 0
-            const current = totalIn - totalOut
+            const total = await Model.query().sum('quantity as total')
+            const totalIn = Number(total[0].$extras.total) || 0
             const CAPACITY = 50
 
             return {
                 id: config.key,
                 name: config.name,
                 capacity: CAPACITY,
-                current: current,
-                remaining: CAPACITY - current
+                current: totalIn,
+                remaining: CAPACITY - totalIn
             }
         }))
         return view.render('home', { 

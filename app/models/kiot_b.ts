@@ -10,10 +10,10 @@ export default class KiotB extends BaseModel {
   declare kiotName: string
 
   @column()
-  declare type: string
+  declare container_uid: string
 
   @column()
-  declare capacity: number
+  declare item_type_name: string
 
   @column()
   declare quantity: number
