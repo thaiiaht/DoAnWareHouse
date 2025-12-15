@@ -35,12 +35,6 @@ export default class HomeController {
         let newStock = currentStock
         const quantityNum = Number(quantity)
 
-        if (type === 'in') {
-            newStock = currentStock + quantityNum
-        } else if (type === 'out') {
-            newStock = currentStock - quantityNum
-        }
-
         if ( !existed ) {
             type = "in"
             newStock = currentStock + quantityNum
