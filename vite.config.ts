@@ -18,6 +18,6 @@ export default defineConfig({
   ],
     server: {
     host: true,
-    allowedHosts: ["myapp.loca.lt"]
+    allowedHosts: true
   },
 })
