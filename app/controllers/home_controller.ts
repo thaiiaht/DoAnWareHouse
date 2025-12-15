@@ -47,7 +47,6 @@ export default class HomeController {
         } else {
             type = "out"
             newStock = currentStock - quantityNum
-            console.log(isExisted)
             await isExisted.delete()
         }
 
