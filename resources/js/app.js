@@ -95,25 +95,24 @@ function showPopup(data) {
 }
 
 async function sendResetCommand(kiotId) {
-    //   try {
-    //     const response = await fetch('/api/kiot/reset', {
-    //       method: 'POST',
-    //       headers: {
-    //         'Content-Type': 'application/json',
-    //         // Nhớ thêm CSRF Token nếu project có bật
-    //       },
-    //       body: JSON.stringify({ kiot: kiotId })
-    //     })
+      try {
+        const response = await fetch('/api/kiot/reset', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            // Nhớ thêm CSRF Token nếu project có bật
+          },
+          body: JSON.stringify({ kiot: kiotId })
+        })
 
-    //     if (response.ok) {
-    //       Swal.fire('Thành công!', 'Đã gửi lệnh reset xuống ESP.', 'success')
-    //     } else {
-    //       Swal.fire('Lỗi!', 'Không gửi được lệnh.', 'error')
-    //     }
-    //   } catch (error) {
-    //     console.error(error)
-    //   }
-    window.location.reload()
+        if (response.ok) {
+          Swal.fire('Thành công!', 'Đã gửi lệnh reset xuống ESP.', 'success')
+        } else {
+          Swal.fire('Lỗi!', 'Không gửi được lệnh.', 'error')
+        }
+      } catch (error) {
+        console.error(error)
+      }
     }
 
 //  Function gatekeeper
