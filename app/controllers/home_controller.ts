@@ -16,7 +16,7 @@ export default class HomeController {
             })
         }
 
-        const existed = await KiotModel
+        const isExisted = await KiotModel
             .query()
             .where('container_uid', container_uid)
             .first()
@@ -35,13 +35,20 @@ export default class HomeController {
         let newStock = currentStock
         const quantityNum = Number(quantity)
 
-        if ( !existed ) {
+        if ( !isExisted ) {
             type = "in"
             newStock = currentStock + quantityNum
+            await KiotModel.create({
+                kiotName,
+                container_uid,
+                item_type_name,
+                quantity: quantityNum,
+        })
         } else {
             type = "out"
             newStock = currentStock - quantityNum
-            await existed.delete()
+            console.log(isExisted)
+            await isExisted.delete()
         }
 
         // Check available_capacity
@@ -54,13 +61,6 @@ export default class HomeController {
             })
             return response.badRequest({ message: 'Kho đầy!' })
         }
-
-        await KiotModel.create({
-            kiotName,
-            container_uid,
-            item_type_name,
-            quantity: quantityNum,
-        })
 
         transmit.broadcast('/kiot/updates', {
             status: 'success',
