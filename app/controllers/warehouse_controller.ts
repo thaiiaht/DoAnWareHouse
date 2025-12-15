@@ -77,17 +77,15 @@ export default class WarehouseController {
             if (!Model) return { id: config.key, remaining: CAPACITY }
 
             // Chạy song song 2 query In/Out để giảm thời gian chờ database
-            const [inRes, outRes] = await Promise.all([
-                Model.query().where('type', 'in').sum('quantity as total'),
-                Model.query().where('type', 'out').sum('quantity as total')
+            const [ total ] = await Promise.all([
+                Model.query().sum('quantity as total'),
             ])
             
-            const totalIn = Number(inRes[0].$extras.total) || 0
-            const totalOut = Number(outRes[0].$extras.total) || 0
+            const totalIn = Number(total[0].$extras.total) || 0
 
             return {
                 id: config.key,
-                remaining: CAPACITY - (totalIn - totalOut)
+                remaining: CAPACITY - totalIn
             }
         }))
 
