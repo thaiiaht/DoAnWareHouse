@@ -10,6 +10,25 @@ export default class WarehouseController {
         return view.render('deliveryLogs', { log })
     }
 
+    async kioskInfor({ request, view, response }: HttpContext) {
+    const currentStore = request.input('store', 'kho-a') as keyof typeof kiotMap
+
+    if (!kiotMap[currentStore]) {
+      return response.badRequest('Kho không tồn tại')
+    }
+
+    const Model = kiotMap[currentStore]
+
+    // CẬP NHẬT: Sắp xếp theo ngày tạo mới nhất (desc)
+    const products = await Model.query().orderBy('createdAt', 'desc')
+
+    return view.render('kioskInfo', {
+      products: products,
+      currentStore: currentStore,
+      storeList: Object.keys(kiotMap) 
+    })
+  }
+
     async arrival({ request, response }: HttpContext) {
         const { kiot } = request.body()
         const payload = {

@@ -1,199 +1,202 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Warehouse Dashboard</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script>
-        window.UserRole = "{{ user?.role ?? 'Guest' }}";
-    </script>
-    @vite(['resources/css/header.css', 'resources/css/main.css', 'resources/css/app.css'])
-    @vite(['resources/js/home.js', 'resources/js/app.js'])
-</head>
-<body>
+    <!DOCTYPE html>
+    <html lang="vi">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Warehouse Dashboard</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script>
+            window.UserRole = "{{ user?.role ?? 'Guest' }}";
+        </script>
+        @vite(['resources/css/header.css', 'resources/css/main.css', 'resources/css/app.css'])
+        @vite(['resources/js/home.js', 'resources/js/app.js'])
+    </head>
+    <body>
 
-<header>
-    <nav>
-        <div class="nav-left">
-            <div class="side-bar-btn" id="menu-btn"> 
-                <i class="fa-solid fa-bars fa-lg"></i>
-            </div>
-            <p class="title">THE WAREHOUSE CENTER</p>
-        </div>
-
-        <div class="user-menu">
-        {{-- user --}}
-        @if(user) 
-            <div id="userDiv" class="logged-in-box">
-                <span class="welcome-text">Hi, {{user.fullName}}</span>
-                <a class="logout" id="logoutBtn" href="#"><i class="fa-solid fa-power-off"></i></a>
-            </div>
-        @else
-        {{-- Login/Register Buttons --}}
-            <div id="authDiv">
-                <button class="header-btn btn-signin" onclick="openLogin()">Đăng nhập</button>
-                <button class="header-btn btn-signup" onclick="openRegister()">Đăng ký</button>
-            </div>
-
-            {{-- Login Popup --}}
-            <div id="loginModal" class="modal">
-                <div class="modal-content">
-                    <span class="close" onclick="closeLogin()">&times;</span>
-                    <h2>Đăng nhập</h2>
-                    <form class="auth-form" id="loginForm">
-                        <div class="form-group">
-                            <label>Email</label>
-                            <input class="input-field" type="email" id="email" placeholder="example@mail.com" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Mật khẩu</label>
-                            <input class="input-field" type="password" id="password" placeholder="••••••" required>
-                        </div> 
-                        <button class="btn-submit" type="submit">Đăng nhập</button>
-                    </form>
+    <header>
+        <nav>
+            <div class="nav-left">
+                <div class="side-bar-btn" id="menu-btn"> 
+                    <i class="fa-solid fa-bars fa-lg"></i>
                 </div>
+                <p class="title">THE WAREHOUSE CENTER</p>
             </div>
 
-            {{-- Register Popup --}}
-            <div id="registerModal" class="modal">
-                <div class="modal-content">
-                    <span class="close" onclick="closeRegister()">&times;</span>
-                    <h2>Đăng ký</h2>
-                    <form class="auth-form" id="registerForm" method="post" action="/auth/register">
-                        <div class="form-group">
-                            <label>Họ và tên</label>
-                            <input class="input-field" type="text" id="fullName" placeholder="Nguyen Van A" required>
-                        </div>   
-                        <div class="form-group">
-                            <label>Email</label>
-                            <input class="input-field" type="email" id="emailR" placeholder="example@mail.com" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Mật khẩu</label>
-                            <input class="input-field" type="password" id="passwordR" placeholder="••••••" required>
-                        </div> 
-                        <button class="btn-submit" type="submit">Đăng ký</button>
-                    </form>
+            <div class="user-menu">
+            {{-- user --}}
+            @if(user) 
+                <div id="userDiv" class="logged-in-box">
+                    <span class="welcome-text">Hi, {{user.fullName}}</span>
+                    <a class="logout" id="logoutBtn" href="#"><i class="fa-solid fa-power-off"></i></a>
                 </div>
-            </div>
-        @endif
-        </div>
-    </nav>
-</header>
-
-{{-- side-bar --}}
-<div id="side-bar" class="side-bar">
-    <div class="sideBar-content">
-        <a class="sideBar-item" href="/logs">
-            <i class="fa-solid fa-clock-rotate-left"></i> Delivery Logs
-        </a>
-        @if(user?.role === 'admin')
-        <a class="sideBar-item" href="{{ route('admin.index') }}">
-            <i class="fa-solid fa-users-gear"></i> Quản lý nhân sự
-        </a>
-        <a class="sideBar-item" href="/car/control">
-            <i class="fa-solid fa-users-gear"></i> Car Control
-        </a>
-        @endif
-    </div>
-</div>
-
-<div id="notification">
-    <script>
-        if (!window.toastShown) { 
-            window.toastShown = true;
-            toastr.options = {
-                closeButton: true,
-                progressBar: true,
-                timeOut: "3000",
-                positionClass: "toast-bottom-right"
-            };
-        }
-    </script>
-</div>
-
-<div class="container">
-    
-    {{-- Welcome Card --}}
-    <div class="profile-block">
-        <div class="profile-info">
-            <div class="profile-header">
-                <div class="profile-avatar">
-                    <i class="fa-solid fa-user-tie fa-xl"></i>
+            @else
+            {{-- Login/Register Buttons --}}
+                <div id="authDiv">
+                    <button class="header-btn btn-signin" onclick="openLogin()">Đăng nhập</button>
+                    <button class="header-btn btn-signup" onclick="openRegister()">Đăng ký</button>
                 </div>
-                <div>
-                    <div class="profile-name">{{user?.fullName ?? 'Khách'}}</div>
-                    <div class="profile-role">{{ user?.email ?? 'Vui lòng đăng nhập để quản lý'}}</div>
-                </div>
-            </div>
-        </div>
-        <div class="profile-stats">
-                {{-- LOGIC CHECK ROLE: Chỉ hiện nút nếu là Gatekeeper --}}
-            @if(user?.role === 'gatekeeper') 
-                <button id="btnGateAction" class="btn-gate-action">
-                    <div class="btn-icon">
-                        <i class="fa-solid fa-truck-ramp-box"></i>
+
+                {{-- Login Popup --}}
+                <div id="loginModal" class="modal">
+                    <div class="modal-content">
+                        <span class="close" onclick="closeLogin()">&times;</span>
+                        <h2>Đăng nhập</h2>
+                        <form class="auth-form" id="loginForm">
+                            <div class="form-group">
+                                <label>Email</label>
+                                <input class="input-field" type="email" id="email" placeholder="example@mail.com" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Mật khẩu</label>
+                                <input class="input-field" type="password" id="password" placeholder="••••••" required>
+                            </div> 
+                            <button class="btn-submit" type="submit">Đăng nhập</button>
+                        </form>
                     </div>
-                    <span>Bắt đầu nhập hàng</span>
-                </button>
+                </div>
+
+                {{-- Register Popup --}}
+                <div id="registerModal" class="modal">
+                    <div class="modal-content">
+                        <span class="close" onclick="closeRegister()">&times;</span>
+                        <h2>Đăng ký</h2>
+                        <form class="auth-form" id="registerForm" method="post" action="/auth/register">
+                            <div class="form-group">
+                                <label>Họ và tên</label>
+                                <input class="input-field" type="text" id="fullName" placeholder="Nguyen Van A" required>
+                            </div>   
+                            <div class="form-group">
+                                <label>Email</label>
+                                <input class="input-field" type="email" id="emailR" placeholder="example@mail.com" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Mật khẩu</label>
+                                <input class="input-field" type="password" id="passwordR" placeholder="••••••" required>
+                            </div> 
+                            <button class="btn-submit" type="submit">Đăng ký</button>
+                        </form>
+                    </div>
+                </div>
             @endif
-            <div class="stat-box">
-                <span class="stat-label">Vai trò</span>
-                <span class="stat-value">{{ user?.role ?? 'Guest'}}</span>
             </div>
+        </nav>
+    </header>
+
+    {{-- side-bar --}}
+    <div id="side-bar" class="side-bar">
+        <div class="sideBar-content">
+            <a class="sideBar-item" href="/kiosk/info">
+                <i class="fa-solid fa-warehouse"></i> Inventory
+            </a>
+            <a class="sideBar-item" href="/logs">
+                <i class="fa-solid fa-clock-rotate-left"></i> Delivery Logs
+            </a>
+            @if(user?.role === 'admin')
+            <a class="sideBar-item" href="{{ route('admin.index') }}">
+                <i class="fa-solid fa-users-gear"></i> Quản lý nhân sự
+            </a>
+            <a class="sideBar-item" href="/car/control">
+                <i class="fa-solid fa-users-gear"></i> Car Control
+            </a>
+            @endif
         </div>
     </div>
 
-    {{-- Warehouse Grid --}}
-    <div class="warehouse-grid">
-        @each(wh in warehouses)
-            {{-- Thêm data-capacity để JS tính toán % --}}
-            <div class="warehouse-card" id="{{ wh.id }}-card" data-capacity="{{ wh.capacity }}">
-                <div class="card-header">
-                    <div class="warehouse-icon">
-                        <i class="fa-solid fa-warehouse"></i>
-                    </div>
-                    <div class="warehouse-status status-active">Hoạt động</div>
-                </div>
-                
-                <div class="warehouse-name">{{ wh.name }}</div>
-                
-                <div class="warehouse-info">
-                    <div class="info-row">
-                        <span class="info-label">Sức chứa</span>
-                        <span class="info-value">{{ wh.capacity }}</span>
-                    </div>
-                    
-                    <div class="info-row">
-                        <span class="info-label">Hiện có</span>
-                        <span class="info-value" id="{{ wh.id }}-current">{{ wh.current }}</span>
-                    </div>
-                    
-                    <div class="info-row">
-                        <span class="info-label">Còn trống</span>
-                        <span class="info-value" id="{{ wh.id }}-remain">{{ wh.remaining }}</span>
-                    </div>
-                </div>
+    <div id="notification">
+        <script>
+            if (!window.toastShown) { 
+                window.toastShown = true;
+                toastr.options = {
+                    closeButton: true,
+                    progressBar: true,
+                    timeOut: "3000",
+                    positionClass: "toast-bottom-right"
+                };
+            }
+        </script>
+    </div>
 
-                {{-- Progress Bar --}}
-                <div class="progress-track">
-                    {{-- Tính toán width inline cho lần load đầu tiên --}}
-                    <div class="progress-fill" 
-                         id="{{ wh.id }}-progress"
-                         style="width: {{ (wh.current / wh.capacity) * 100 }}%">
+    <div class="container">
+        
+        {{-- Welcome Card --}}
+        <div class="profile-block">
+            <div class="profile-info">
+                <div class="profile-header">
+                    <div class="profile-avatar">
+                        <i class="fa-solid fa-user-tie fa-xl"></i>
+                    </div>
+                    <div>
+                        <div class="profile-name">{{user?.fullName ?? 'Khách'}}</div>
+                        <div class="profile-role">{{ user?.email ?? 'Vui lòng đăng nhập để quản lý'}}</div>
                     </div>
                 </div>
             </div>
-        @endeach
-    </div> 
-    <div class="banner">
-        <img class="banner-img" src="/resources/images/last.png" >
+            <div class="profile-stats">
+                    {{-- LOGIC CHECK ROLE: Chỉ hiện nút nếu là Gatekeeper --}}
+                @if(user?.role === 'gatekeeper') 
+                    <button id="btnGateAction" class="btn-gate-action">
+                        <div class="btn-icon">
+                            <i class="fa-solid fa-truck-ramp-box"></i>
+                        </div>
+                        <span>Bắt đầu nhập hàng</span>
+                    </button>
+                @endif
+                <div class="stat-box">
+                    <span class="stat-label">Vai trò</span>
+                    <span class="stat-value">{{ user?.role ?? 'Guest'}}</span>
+                </div>
+            </div>
+        </div>
+
+        {{-- Warehouse Grid --}}
+        <div class="warehouse-grid">
+            @each(wh in warehouses)
+                {{-- Thêm data-capacity để JS tính toán % --}}
+                <div class="warehouse-card" id="{{ wh.id }}-card" data-capacity="{{ wh.capacity }}">
+                    <div class="card-header">
+                        <div class="warehouse-icon">
+                            <i class="fa-solid fa-warehouse"></i>
+                        </div>
+                        <div class="warehouse-status status-active">Hoạt động</div>
+                    </div>
+                    
+                    <div class="warehouse-name">{{ wh.name }}</div>
+                    
+                    <div class="warehouse-info">
+                        <div class="info-row">
+                            <span class="info-label">Sức chứa</span>
+                            <span class="info-value">{{ wh.capacity }}</span>
+                        </div>
+                        
+                        <div class="info-row">
+                            <span class="info-label">Hiện có</span>
+                            <span class="info-value" id="{{ wh.id }}-current">{{ wh.current }}</span>
+                        </div>
+                        
+                        <div class="info-row">
+                            <span class="info-label">Còn trống</span>
+                            <span class="info-value" id="{{ wh.id }}-remain">{{ wh.remaining }}</span>
+                        </div>
+                    </div>
+
+                    {{-- Progress Bar --}}
+                    <div class="progress-track">
+                        {{-- Tính toán width inline cho lần load đầu tiên --}}
+                        <div class="progress-fill" 
+                            id="{{ wh.id }}-progress"
+                            style="width: {{ (wh.current / wh.capacity) * 100 }}%">
+                        </div>
+                    </div>
+                </div>
+            @endeach
+        </div> 
+        <div class="banner">
+            <img class="banner-img" src="/resources/images/last.png" >
+        </div>
     </div>
-</div>
-</body>
-</html>
+    </body>
+    </html>

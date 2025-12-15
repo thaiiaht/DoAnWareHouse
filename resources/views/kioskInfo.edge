@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quản lý Kiot - {{ currentStore }}</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen bg-[#e6ecfe]">
+
+  <nav class="bg-white shadow-sm border-b border-gray-200 p-4 mb-6">
+    <div class="container mx-auto flex justify-between items-center">
+      
+      <a href="/" class="flex items-center gap-2 text-gray-600 hover:text-blue-600 font-semibold transition duration-200">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/> 
+          <polyline points="9 22 9 12 15 12 15 22"/>
+        </svg>
+        Trang chủ
+      </a>
+
+      <div class="flex items-center gap-3">
+        <label for="store-select" class="text-sm font-medium text-gray-600">Đang xem kho:</label>
+        <div class="relative">
+          <select 
+            id="store-select" 
+            onchange="window.location.href='?store=' + this.value"
+            class="appearance-none border border-gray-300 rounded-lg pl-4 pr-10 py-2 bg-white text-gray-700 font-medium hover:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer shadow-sm transition"
+          >
+            @each(storeKey in storeList)
+              <option value="{{ storeKey }}" {{ storeKey === currentStore ? 'selected' : '' }}>
+                {{ storeKey.toUpperCase() }}
+              </option>
+            @end
+          </select>
+          <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+            <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </nav>
+
+  <main class="container mx-auto p-4">
+    
+    <div class="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
+      <div class="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50">
+        <div>
+           <h1 class="text-2xl font-bold text-gray-800">📦 {{ currentStore.toUpperCase() }}</h1>
+           <p class="text-sm text-gray-500 mt-1">Danh sách hàng hóa hiện có trong kho</p>
+        </div>
+        <span class="text-xs font-mono bg-gray-200 text-gray-600 px-2 py-1 rounded">
+          Total items: {{ products.length }}
+        </span>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="bg-gray-100 text-gray-600 text-xs font-bold uppercase tracking-wider">
+              <th class="py-4 px-6">Tên Hàng (Item Type)</th>
+              <th class="py-4 px-6 text-center">Container UID</th>
+              <th class="py-4 px-6 text-center">Số Lượng</th>
+              <th class="py-4 px-6 text-center">Thời gian nhập</th>
+              <th class="py-4 px-6 text-right">ID (System)</th>
+            </tr>
+          </thead>
+          <tbody class="text-gray-700 text-sm">
+            @if(products.length === 0)
+              <tr>
+                <td colspan="5" class="py-8 text-center text-gray-500 italic">
+                  Chưa có dữ liệu nào trong kho này.
+                </td>
+              </tr>
+            @else
+              @each(item in products)
+              <tr class="border-b border-gray-100 hover:bg-blue-50 transition duration-150">
+                
+                <td class="py-4 px-6 font-semibold text-gray-800">
+                  {{ item.item_type_name }}
+                </td>
+
+                <td class="py-4 px-6 text-center">
+                  <span class="bg-purple-100 text-purple-700 px-2 py-1 rounded text-xs font-mono border border-purple-200">
+                    {{ item.container_uid }}
+                  </span>
+                </td>
+
+                <td class="py-4 px-6 text-center">
+                  <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold border border-green-200">
+                    {{ item.quantity }}
+                  </span>
+                </td>
+
+                <td class="py-4 px-6 text-center text-gray-500">
+                  {{ item.createdAt ? item.createdAt.toFormat('dd/MM/yyyy HH:mm') : '-' }}
+                </td>
+
+                <td class="py-4 px-6 text-right text-xs text-gray-400 font-mono" title="{{ item.id }}">
+                  {{ item.id.split('-')[0] }}...
+                </td>
+
+              </tr>
+              @end
+            @endif
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+</body>
+</html>
