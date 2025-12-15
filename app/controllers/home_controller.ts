@@ -47,6 +47,7 @@ export default class HomeController {
         } else {
             type = "out"
             newStock = currentStock - quantityNum
+            await existed.delete()
         }
 
         // Check available_capacity
