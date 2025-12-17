@@ -98,7 +98,15 @@ export default class WarehouseController {
         return response.ok({ message: 'Command sent' })
     }
 
-        async endImport({ response }: HttpContext) {
+    async sendQrData({ request, response }: HttpContext) {
+        const qrDataRaw = request.input('qr_data')
+        console.log(qrDataRaw)
+        const topic = 'car/send/qr'
+        mqttService.publish(topic, qrDataRaw)
+        return response.ok({ message: 'Command sent' })
+    }
+
+    async endImport({ response }: HttpContext) {
         const topic = 'car/import/end'
         const message = JSON.stringify({ command: "END_IMPORT"})
         mqttService.publish(topic, message)

@@ -29,6 +29,7 @@ class CarControlService {
       this.subscribe('car/st')
       this.subscribe('car/import/start')
       this.subscribe('car/import/end')
+      this.subscribe('car/send/qr')
     })
 
     this.client.on('error', (err) => {

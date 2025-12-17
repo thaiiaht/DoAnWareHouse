@@ -103,6 +103,9 @@
                 <i class="fa-solid fa-users-gear"></i> Car Control
             </a>
             @endif
+            <a class="sideBar-item" href="/test">
+                <i class="fa-solid fa-warehouse"></i> test
+            </a>
         </div>
     </div>
 
@@ -144,6 +147,7 @@
                         </div>
                         <span>Bắt đầu nhập hàng</span>
                     </button>
+                    <meta name="csrf-token" content="{{ csrfToken }}">
                 @endif
                 <div class="stat-box">
                     <span class="stat-label">Vai trò</span>

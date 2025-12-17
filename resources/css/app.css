@@ -65,3 +65,61 @@
     0% { transform: scale(1); opacity: 0.8; }
     100% { transform: scale(6); opacity: 0; }
 }
+
+.swal-iot-container {
+    width: 600px;
+    height: 600px;
+} 
+
+/* Ép khung camera thành hình vuông 1:1 */
+#qr-reader-inline {
+    width: 100% !important;
+    aspect-ratio: 1 / 1 !important;
+    border: none !important;
+    background: #000 !important;
+    border-radius: 12px !important;
+    overflow: hidden !important;
+    position: relative;
+}
+
+#qr-reader-inline video {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+}
+
+/* Ẩn các thành phần rác của thư viện */
+#qr-reader-inline__dashboard_section_swaplink, 
+#qr-reader-inline__dashboard_section_csr,
+#qr-reader-inline img { display: none !important; }
+
+/* Bảng hiển thị thông tin sản phẩm từ JSON */
+.qr-data-table {
+    width: 100%;
+    margin-top: 10px;
+    border-collapse: collapse;
+    background: #fff;
+}
+.qr-data-table td {
+    padding: 8px;
+    border-bottom: 1px solid #eee;
+    font-size: 13px;
+    text-align: left;
+}
+.qr-label { color: #747d8c; font-weight: bold; width: 35%; }
+.qr-value { color: #2f3542; font-family: 'Courier New', Courier, monospace; word-break: break-all; }
+
+/* Hiệu ứng vùng kết quả */
+#qr-result-container {
+    border: 2px solid #2ed573;
+    border-radius: 10px;
+    padding: 10px;
+    margin-top: 15px;
+    background: #f1f9f4;
+    animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}

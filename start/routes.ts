@@ -8,6 +8,7 @@ import '#start/routes/admin'
 import '#start/routes/warehouse'
 import '#start/routes/home'
 import '#start/routes/carControl'
+import { HttpContext } from '@adonisjs/core/http'
 
 transmit.registerRoutes()
 
@@ -15,3 +16,7 @@ router.get('/', [AuthController, 'index']).use(middleware.optional())
 router.post('/login', [AuthController, 'login'])
 router.post('/register', [AuthController, 'register'])
 router.post('/logout', [AuthController, 'logout'])
+
+router.get('/test', async ({ view }: HttpContext) => {
+    return view.render('test')
+})

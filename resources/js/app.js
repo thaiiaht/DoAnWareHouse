@@ -1,16 +1,19 @@
-import { Transmit } from '@adonisjs/transmit-client'
+import { Transmit } from '@adonisjs/transmit-client';
 import toastr from 'toastr';
 import 'toastr/build/toastr.min.css';
 import Swal from 'sweetalert2';
+import { Html5Qrcode } from 'html5-qrcode';
 
-const currentRole = window.UserRole
+const currentRole = window.UserRole;
+let html5QrCode = null;
+let currentScannedData = null;
 
-const transmit = new Transmit({
-  baseUrl: window.location.origin})
+const transmit = new Transmit({ baseUrl: window.location.origin });
 
 document.addEventListener("DOMContentLoaded", () => {
-    initRealtime()
-})
+    initRealtime();
+    initGatekeeper();
+});
 
 async function initRealtime() {
     // thông báo khi sắp tới kiot nào
@@ -95,95 +98,132 @@ function showPopup(data) {
 }
 
 async function sendResetCommand(kiotId) {
-    //   try {
-    //     const response = await fetch('/api/kiot/reset', {
-    //       method: 'POST',
-    //       headers: {
-    //         'Content-Type': 'application/json',
-    //         // Nhớ thêm CSRF Token nếu project có bật
-    //       },
-    //       body: JSON.stringify({ kiot: kiotId })
-    //     })
+      try {
+        const response = await fetch('/api/kiot/reset', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            // Nhớ thêm CSRF Token nếu project có bật
+          },
+          body: JSON.stringify({ kiot: kiotId })
+        })
 
-    //     if (response.ok) {
-    //       Swal.fire('Thành công!', 'Đã gửi lệnh reset xuống ESP.', 'success')
-    //     } else {
-    //       Swal.fire('Lỗi!', 'Không gửi được lệnh.', 'error')
-    //     }
-    //   } catch (error) {
-    //     console.error(error)
-    //   }
-    window.location.reload()
+        if (response.ok) {
+          Swal.fire('Thành công!', 'Đã gửi lệnh reset xuống ESP.', 'success')
+        } else {
+          Swal.fire('Lỗi!', 'Không gửi được lệnh.', 'error')
+        }
+      } catch (error) {
+        console.error(error)
+      }
     }
 
-//  Function gatekeeper
-document.addEventListener('DOMContentLoaded', () => {
+// --- GATEKEEPER LOGIC ---
+function initGatekeeper() {
     const btnGateAction = document.getElementById('btnGateAction');
+    if (!btnGateAction) return;
 
-    if (btnGateAction) {
-        btnGateAction.addEventListener('click', function(e) {
-            e.preventDefault();
+    btnGateAction.addEventListener('click', function(e) {
+        e.preventDefault();
 
-            Swal.fire({
-                // ... (Phần HTML giữ nguyên) ...
-                title: '<span style="color: #2f3542; font-weight:700">Hệ thống đang chạy</span>',
-                html: `
-                    <div class="swal-iot-container">
-                        <div class="radar-wave"></div>
-                        <div class="radar-wave"></div>
-                        <div class="radar-wave"></div>
-                        <div class="radar-emitter">
-                            <i class="fa-solid fa-truck-fast fa-xl" style="color: #00d2d3;"></i>
-                        </div>
-                    </div>
-                    <div style="text-align: left; font-size: 14px; color: #57606f; padding: 0 20px;">
-                        <p><i class="fa-solid fa-circle-check" style="color: #2ed573"></i> Đã gửi lệnh mở cổng.</p>
-                        <p><i class="fa-solid fa-wifi" style="color: #ffa502"></i> Đang trong quá trình nhập hàng</p>
-                        <p class="animate-pulse" style="margin-top:10px; font-style: italic; text-align:center">
-                            Vui lòng không tắt trình duyệt...
-                        </p>
-                    </div>
-                `,
-                showCancelButton: false,
-                confirmButtonText: '<i class="fa-solid fa-stop"></i> Đã nhập hàng xong',
-                confirmButtonColor: '#ff4757',
-                allowOutsideClick: false,
-                allowEscapeKey: false,
-
-                // 1. GỬI START
-                didOpen: async () => {
-                    Swal.showLoading();
+        Swal.fire({
+            title: '<span style="color: #2f3542; font-weight:700; font-size: 24px;">Hệ thống đang chạy</span>',
+            width: '650px', // ĐỘ RỘNG POPUP
+            customClass: {
+                popup: 'swal-wide-popup'
+            },
+            html: `
+                <div class="swal-iot-container" style="padding: 10px ;">
+                    <div id="qr-reader-inline"></div>
                     
-                    try {
-                        // Cứ gửi, không quan tâm kết quả
-                        await fetch('/api/iot/start', { method: 'POST' });
-                    } catch (e) {
-                        console.log('Lỗi gửi start (kệ nó):', e);
-                    } finally {
-                        // QUAN TRỌNG: Dù lỗi hay không thì vẫn tắt loading để hiện nút bấm
-                        Swal.hideLoading(); 
-                    }
-                },
+                    <div id="qr-result-container" style="display: none; margin-top: 20px; padding: 15px; background: #f1f9f4; border: 2px solid #2ed573; border-radius: 12px;">
+                        <div id="qr-data-content"></div>
+                        <button id="btn-confirm-qr" type="button" style="background: #2ed573; color: white; border: none; width: 100%; padding: 15px; border-radius: 10px; margin-top: 15px; cursor: pointer; font-weight: bold; font-size: 18px; box-shadow: 0 4px 6px rgba(46, 213, 115, 0.2);">
+                            XÁC NHẬN NHẬP HÀNG (OK)
+                        </button>
+                    </div>
 
-                // 2. GỬI STOP
-                preConfirm: async () => {
-                    try {
-                        await fetch('/api/iot/end', { method: 'POST' });
-                    } catch (e) {
-                        console.log('Lỗi gửi end (kệ nó):', e);
-                    }
-                }
-            }).then((result) => {
-                // (Tùy chọn) Hiện thông báo nhỏ khi xong
-                if (result.isConfirmed) {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Hoàn tất',
-                        timer: 1500,
-                        showConfirmButton: false
-                    });
-                }
-            });
+                    <div id="scan-status" style="margin-top: 20px; font-size: 16px; color: #57606f;">
+                        <i class="fa-solid fa-qrcode fa-beat-fade"></i> Vui lòng đưa mã QR vào khung quét...
+                    </div>
+                </div>
+            `,
+            showCancelButton: true,
+            confirmButtonText: '<i class="fa-solid fa-stop"></i> Đã nhập hàng xong',
+            confirmButtonColor: '#ff4757',
+            allowOutsideClick: false,
+            didOpen: async () => {
+                html5QrCode = new Html5Qrcode("qr-reader-inline");
+                fetch('/api/iot/start', { method: 'POST' });
+
+                try {
+                    await html5QrCode.start(
+                        { facingMode: "environment" },
+                        { 
+                            fps: 20, 
+                            qrbox: (w, h) => ({ width: h * 0.7, height: h * 0.7 }) 
+                        },
+                        (text) => { handleQrDetected(text); }
+                    );
+                } catch (err) { toastr.error("Lỗi khởi động camera!"); }
+
+                document.addEventListener('click', handleInternalOk);
+            },
+            preConfirm: async () => {
+                document.removeEventListener('click', handleInternalOk);
+                if (html5QrCode) await html5QrCode.stop().catch(() => {});
+                await fetch('/api/iot/end', { method: 'POST' }).catch(() => {});
+                return true;
+            }
         });
+    });
+}
+
+function handleQrDetected(qrData) {
+    html5QrCode.pause(true); 
+    currentScannedData = qrData;
+
+    let tableContent = '';
+    try {
+        const data = JSON.parse(qrData);
+        tableContent = `
+            <table class="qr-data-table">
+                <tr><td class="qr-label">Sản phẩm:</td><td class="qr-value" style="font-size: 18px; color: #1e3799;">${data.product_name || 'N/A'}</td></tr>
+                <tr><td class="qr-label">Số lượng:</td><td class="qr-value">${data.quantity || 1}</td></tr>
+                <tr><td class="qr-label">ID Kiện:</td><td class="qr-value" style="font-size:11px">${data.unique_id || 'N/A'}</td></tr>
+            </table>
+        `;
+    } catch (e) {
+        tableContent = `<div style="padding:15px; word-break:break-all; font-family: monospace;">${qrData}</div>`;
     }
-});
+
+    document.getElementById('qr-data-content').innerHTML = tableContent;
+    document.getElementById('qr-result-container').style.display = 'block';
+    document.getElementById('scan-status').style.display = 'none';
+}
+
+async function handleInternalOk(e) {
+    if (e.target && e.target.id === 'btn-confirm-qr') {
+        // 1. Gửi API chạy ngầm (không dùng await ở đây để không phải chờ)
+        fetch('/api/warehouse/receive', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ qr_data: currentScannedData })
+        })
+        // 3. Reset giao diện và QUÉT TIẾP NGAY LẬP TỨC
+        const resultContainer = document.getElementById('qr-result-container');
+        const scanStatus = document.getElementById('scan-status');
+
+        if (resultContainer) resultContainer.style.display = 'none';
+        if (scanStatus) scanStatus.style.display = 'block';
+
+        currentScannedData = null;
+
+        // Kích hoạt lại camera
+        if (html5QrCode) {
+            html5QrCode.resume();
+        }
+    }
+}
